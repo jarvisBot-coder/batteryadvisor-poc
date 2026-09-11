@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+  <style>
+    body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: #0c0f1a; color: #e2e8f0; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<!-- Direction 2: "Tech Dashboard" — Inspired by RTINGS data density × The Verge
+     Sora display + DM Sans body. Dark navy ground #0c0f1a, electric teal
+     #2dd4bf as primary accent (not green — differentiated). Score gauges
+     with mini-bar breakdowns. Stats-forward, data-rich cards. -->
+
+<div style="width: 390px; min-height: 844px; background: #0c0f1a; overflow: hidden;">
+
+  <!-- Header -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <div style="width: 26px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, #2dd4bf, #14b8a6); display: flex; align-items: center; justify-content: center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="4" width="10" height="16" rx="2" stroke="#fff" stroke-width="2"/><rect x="10" y="8" width="4" height="6" fill="#fff" opacity="0.9"/></svg>
+      </div>
+      <span style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: -0.3px; color: #f1f5f9;">Battery<span style="color: #2dd4bf;">Advisor</span></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Hero — bold stats-forward opening -->
+  <div style="padding: 32px 20px 24px;">
+    <div style="font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; line-height: 1.15; color: #f8fafc; margin-bottom: 10px; letter-spacing: -0.6px;">
+      Trouvez votre batterie.<br><span style="color: #2dd4bf;">Données, pas de pub.</span>
+    </div>
+    <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin: 0 0 20px;">
+      Tests en conditions réelles, scores pondérés, prix actualisés quotidiennement pour le marché belge.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <div style="padding: 10px 18px; background: #2dd4bf; color: #0c0f1a; font-size: 13px; font-weight: 700; border-radius: 8px;">Explorer les données</div>
+      <div style="padding: 10px 18px; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-size: 13px; font-weight: 600; border-radius: 8px;">🧭 Keuzehulp</div>
+    </div>
+  </div>
+
+  <!-- Live stats strip -->
+  <div style="display: flex; margin: 0 20px 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden;">
+    <div style="flex: 1; padding: 14px; text-align: center; border-right: 1px solid rgba(255,255,255,0.06);">
+      <div style="font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: #2dd4bf; font-variant-numeric: tabular-nums;">24</div>
+      <div style="font-size: 10px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Testées</div>
+    </div>
+    <div style="flex: 1; padding: 14px; text-align: center; border-right: 1px solid rgba(255,255,255,0.06);">
+      <div style="font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: #2dd4bf; font-variant-numeric: tabular-nums;">12</div>
+      <div style="font-size: 10px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Marques</div>
+    </div>
+    <div style="flex: 1; padding: 14px; text-align: center;">
+      <div style="font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: #2dd4bf; font-variant-numeric: tabular-nums;">798€</div>
+      <div style="font-size: 10px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Dès</div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div style="padding: 0 20px 14px; display: flex; gap: 6px; overflow-x: auto;">
+    <span style="font-size: 11px; padding: 5px 12px; background: #2dd4bf; color: #0c0f1a; border-radius: 6px; font-weight: 600; white-space: nowrap;">Top classement</span>
+    <span style="font-size: 11px; padding: 5px 12px; background: rgba(255,255,255,0.06); color: #94a3b8; border-radius: 6px; font-weight: 500; white-space: nowrap;">Plug-in</span>
+    <span style="font-size: 11px; padding: 5px 12px; background: rgba(255,255,255,0.06); color: #94a3b8; border-radius: 6px; font-weight: 500; white-space: nowrap;">Budget</span>
+    <span style="font-size: 11px; padding: 5px 12px; background: rgba(255,255,255,0.06); color: #94a3b8; border-radius: 6px; font-weight: 500; white-space: nowrap;">🇧🇪</span>
+  </div>
+
+  <!-- Battery Card 1 — data-rich with mini score bars -->
+  <div style="margin: 0 20px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden;">
+    <div style="padding: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+            <span style="font-size: 10px; font-weight: 600; color: #2dd4bf; text-transform: uppercase; letter-spacing: 0.8px;">Zendure</span>
+            <span style="font-size: 9px; padding: 2px 6px; background: rgba(45,212,191,0.15); color: #2dd4bf; border-radius: 3px; font-weight: 600;">N°1</span>
+            <span style="font-size: 9px; padding: 2px 6px; background: rgba(250,204,21,0.15); color: #fbbf24; border-radius: 3px; font-weight: 600;">🇧🇪</span>
+          </div>
+          <div style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; color: #f1f5f9;">SolarFlow Hub 2000</div>
+        </div>
+        <!-- Score gauge -->
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: conic-gradient(#2dd4bf 0% 92%, rgba(255,255,255,0.06) 92% 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #0c0f1a; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; color: #2dd4bf; font-variant-numeric: tabular-nums;">9.2</div>
+        </div>
+      </div>
+
+      <!-- Specs chips -->
+      <div style="display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;">
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8; font-variant-numeric: tabular-nums;">4 kWh</span>
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8; font-variant-numeric: tabular-nums;">1 200 W</span>
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8;">Plug-in</span>
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8;">10 ans</span>
+      </div>
+
+      <!-- Mini score breakdown bars — RTINGS style -->
+      <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #64748b; width: 65px;">Performance</span>
+          <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;"><div style="width: 94%; height: 100%; background: #2dd4bf; border-radius: 2px;"></div></div>
+          <span style="font-size: 10px; color: #94a3b8; width: 22px; text-align: right; font-variant-numeric: tabular-nums;">9.4</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #64748b; width: 65px;">App</span>
+          <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;"><div style="width: 90%; height: 100%; background: #2dd4bf; border-radius: 2px;"></div></div>
+          <span style="font-size: 10px; color: #94a3b8; width: 22px; text-align: right; font-variant-numeric: tabular-nums;">9.0</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #64748b; width: 65px;">Prix/Qualité</span>
+          <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;"><div style="width: 92%; height: 100%; background: #2dd4bf; border-radius: 2px;"></div></div>
+          <span style="font-size: 10px; color: #94a3b8; width: 22px; text-align: right; font-variant-numeric: tabular-nums;">9.2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);">
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; color: #f1f5f9; font-variant-numeric: tabular-nums;">1 499 €</span>
+        <span style="font-size: 11px; color: #64748b;">· 4 shops</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600; color: #2dd4bf;">Test complet →</div>
+    </div>
+  </div>
+
+  <!-- Battery Card 2 — compact -->
+  <div style="margin: 0 20px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden;">
+    <div style="padding: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
+            <span style="font-size: 10px; font-weight: 600; color: #2dd4bf; text-transform: uppercase; letter-spacing: 0.8px;">EcoFlow</span>
+            <span style="font-size: 9px; padding: 2px 6px; background: rgba(96,165,250,0.15); color: #60a5fa; border-radius: 3px; font-weight: 600;">Puissance max</span>
+          </div>
+          <div style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; color: #f1f5f9;">Delta Pro 3</div>
+        </div>
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: conic-gradient(#a3e635 0% 85%, rgba(255,255,255,0.06) 85% 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #0c0f1a; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; color: #a3e635; font-variant-numeric: tabular-nums;">8.5</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8;">4 kWh</span>
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8;">3 600 W</span>
+        <span style="font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #94a3b8;">Plug-in</span>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);">
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; color: #f1f5f9; font-variant-numeric: tabular-nums;">2 799 €</span>
+        <span style="font-size: 11px; color: #64748b;">· 3 shops</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600; color: #2dd4bf;">Test complet →</div>
+    </div>
+  </div>
+
+  <!-- Quick tools -->
+  <div style="margin: 16px 20px 20px; display: flex; gap: 10px;">
+    <div style="flex: 1; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+      <div style="font-size: 20px; margin-bottom: 6px;">⚖️</div>
+      <div style="font-size: 12px; font-weight: 600; color: #e2e8f0;">Comparateur</div>
+    </div>
+    <div style="flex: 1; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+      <div style="font-size: 20px; margin-bottom: 6px;">🧮</div>
+      <div style="font-size: 12px; font-weight: 600; color: #e2e8f0;">Calculateur</div>
+    </div>
+    <div style="flex: 1; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+      <div style="font-size: 20px; margin-bottom: 6px;">🧭</div>
+      <div style="font-size: 12px; font-weight: 600; color: #e2e8f0;">Keuzehulp</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
