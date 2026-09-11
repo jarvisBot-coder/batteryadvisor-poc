@@ -1,0 +1,74 @@
+# BatteryAdvisor.be — POC & Design Directions
+
+Prototypes et directions de design pour **BatteryAdvisor.be**, un guide indépendant et site d'affiliation pour les batteries domestiques plug-in en Belgique.
+
+## Structure du projet
+
+```
+batteryadvisor-poc/
+├── poc/
+│   └── poc-v2.html          # POC multi-pages interactif (5 pages)
+├── design-directions/
+│   ├── Main.dc.html          # Direction 1 — "Editorial Authority"
+│   ├── BoldEnergetic.dc.html # Direction 2 — "Tech Dashboard"
+│   ├── WarmAccessible.dc.html# Direction 3 — "Warm Expert" ✅ retenue
+│   └── canvas.json           # Layout canvas pour comparaison
+└── docs/
+    └── design-notes.md       # Notes de design et décisions
+```
+
+## POC v2 — Multi-pages
+
+Le POC principal (`poc/poc-v2.html`) est un prototype interactif de 5 pages :
+
+1. **Accueil** — Hero, statistiques, cartes scénarios d'usage, méthodologie, top batteries avec verdicts, aperçu blog
+2. **Batteries** — Filtres, tri, liste compacte avec score circles
+3. **Fiche produit** — Breadcrumb, image, score overview, verdict, specs, onglets (Scores/Specs/Avis/Acheter)
+4. **Comparateur** — Tableau côte-à-côte, barres de comparaison, verdict
+5. **Blog** — Article featured, liste d'articles avec catégories
+
+### Design retenu
+
+- **Direction** : "Warm Expert" (Direction 3)
+- **Typographie** : Fraunces (display) + Plus Jakarta Sans (body)
+- **Palette** : Pierre chaude `#faf9f6`, olive-vert `#4d7c0f`
+- **Dark mode** : Complet, 3 états (light par défaut, data-theme, prefers-color-scheme)
+
+### Patterns UX clés
+
+| Pattern | Inspiration | Usage |
+|---------|------------|-------|
+| Score circles (conic-gradient) | RTINGS | Scores visuels immédiats |
+| Cartes scénarios d'usage | Solar.com | Guidage débutants |
+| Phrases-verdict | EnergySage | Info rapide sans jargon |
+| Bloc méthodologie transparent | EnergySage | Crédibilité |
+| Compteur de shops | ThuisbatterijGids | Conversion affiliation |
+| Comparaison côte-à-côte | Clean Energy Reviews | Info approfondie |
+
+## Directions de design
+
+3 directions visuelles créées pour comparaison :
+
+### Direction 1 — Editorial Authority
+Instrument Serif + Inter. Fond blanc, accents navy. Style Wirecutter × RTINGS. Score circles, densité de données, transparence méthodologique.
+
+### Direction 2 — Tech Dashboard
+Sora + DM Sans. Fond dark navy `#0c0f1a`, accent teal `#2dd4bf`. Gauges avec mini-barres, stats strip, style dashboard technique.
+
+### Direction 3 — Warm Expert ✅
+Fraunces + Plus Jakarta Sans. Fond pierre `#faf9f6`, olive `#4d7c0f`. Style Which? × EnergySage. Guidage, scénarios utilisateur, confiance.
+
+## Stack cible
+
+- **Frontend** : Next.js 15 (App Router) + TypeScript + Tailwind CSS v4
+- **Backend** : Strapi v5
+- **Déploiement** : À définir
+
+## Ouvrir le POC
+
+Ouvrir `poc/poc-v2.html` directement dans un navigateur — aucune dépendance, tout est self-contained.
+
+## Liens
+
+- [POC en ligne (Artifact)](https://claude.ai/code/artifact/fedf57ad-2576-4fc8-943b-c5f30b6a3e08)
+- [Canvas design directions (Artifact)](https://claude.ai/code/artifact/58b59b20-ccd3-4b00-a508-babb6a858814)
