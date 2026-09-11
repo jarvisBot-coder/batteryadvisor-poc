@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #ffffff; color: #111827; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<!-- Direction 1: "Editorial Authority" — Inspired by Wirecutter × RTINGS
+     Instrument Serif display + Inter body. White ground, navy accents,
+     green only for scores. Emphasis on methodology transparency and
+     data density. Score circles like RTINGS, use-case labels like Solar.com -->
+
+<div style="width: 390px; min-height: 844px; background: #fff; overflow: hidden;">
+
+  <!-- Header — thin, quiet, logo-forward -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f0f0f0;">
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="6" y="3" width="12" height="18" rx="2" stroke="#0f172a" stroke-width="2"/>
+        <rect x="9" y="7" width="6" height="8" rx="1" fill="#16a34a"/>
+        <line x1="10" y1="19" x2="14" y2="19" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span style="font-weight: 700; font-size: 15px; letter-spacing: -0.4px; color: #0f172a;">BatteryAdvisor<span style="color: #94a3b8; font-weight: 400;">.be</span></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Hero — editorial, serif headline, understated -->
+  <div style="padding: 36px 20px 28px;">
+    <div style="display: inline-block; padding: 4px 10px; background: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11px; font-weight: 600; color: #15803d; border-radius: 4px; margin-bottom: 16px; letter-spacing: 0.3px;">🇧🇪 GUIDE INDÉPENDANT · BELGIQUE</div>
+    <h1 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: #0f172a; margin: 0 0 12px;">
+      Les meilleures batteries domestiques plug-in de 2026
+    </h1>
+    <p style="font-size: 15px; line-height: 1.6; color: #64748b; margin: 0 0 20px;">
+      Chaque batterie testée par notre équipe. Scores basés sur 8 critères pondérés et vérifiés en conditions réelles.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <div style="padding: 10px 16px; background: #0f172a; color: #fff; font-size: 13px; font-weight: 600; border-radius: 6px;">Voir le classement</div>
+      <div style="padding: 10px 16px; border: 1px solid #e2e8f0; color: #334155; font-size: 13px; font-weight: 600; border-radius: 6px;">Keuzehulp →</div>
+    </div>
+  </div>
+
+  <!-- Methodology strip — transparency like EnergySage -->
+  <div style="margin: 0 20px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px;">
+    <div style="font-size: 12px; font-weight: 600; color: #0f172a; margin-bottom: 10px;">Notre méthodologie de scoring</div>
+    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+      <span style="font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569;">Performance <span style="color: #94a3b8;">25%</span></span>
+      <span style="font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569;">App <span style="color: #94a3b8;">20%</span></span>
+      <span style="font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569;">Prix/Qualité <span style="color: #94a3b8;">20%</span></span>
+      <span style="font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569;">Installation <span style="color: #94a3b8;">15%</span></span>
+      <span style="font-size: 11px; padding: 3px 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569;">Qualité <span style="color: #94a3b8;">20%</span></span>
+    </div>
+    <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">
+      <a href="#" style="color: #3b82f6; text-decoration: none;">Comment nous testons →</a>
+    </div>
+  </div>
+
+  <!-- Section header with filter pills -->
+  <div style="padding: 0 20px 12px;">
+    <div style="font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 10px;">24 batteries testées</div>
+    <div style="display: flex; gap: 6px; overflow-x: auto;">
+      <span style="font-size: 12px; padding: 5px 12px; background: #0f172a; color: #fff; border-radius: 5px; font-weight: 500; white-space: nowrap;">Tous</span>
+      <span style="font-size: 12px; padding: 5px 12px; background: #f1f5f9; color: #475569; border-radius: 5px; font-weight: 500; white-space: nowrap;">Plug-in</span>
+      <span style="font-size: 12px; padding: 5px 12px; background: #f1f5f9; color: #475569; border-radius: 5px; font-weight: 500; white-space: nowrap;">< 2 000 €</span>
+      <span style="font-size: 12px; padding: 5px 12px; background: #f1f5f9; color: #475569; border-radius: 5px; font-weight: 500; white-space: nowrap;">🇧🇪 Approuvé</span>
+    </div>
+  </div>
+
+  <!-- Battery Card 1 — RTINGS-style circular score + use-case label -->
+  <div style="margin: 8px 20px 12px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+    <div style="display: flex; gap: 14px; padding: 16px;">
+      <!-- Score circle -->
+      <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(#16a34a 0% 92%, #e5e7eb 92% 100%); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">9.2</div>
+      </div>
+      <!-- Info -->
+      <div style="flex: 1; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+          <span style="font-size: 11px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.5px;">Zendure</span>
+          <span style="font-size: 10px; padding: 1px 6px; background: #fef3c7; color: #92400e; border-radius: 3px; font-weight: 600;">Meilleur choix</span>
+        </div>
+        <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 6px;">SolarFlow Hub 2000</div>
+        <div style="display: flex; gap: 12px; font-size: 12px; color: #64748b;">
+          <span>4 kWh</span>
+          <span>1 200 W</span>
+          <span>Plug-in</span>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom bar — price + shops count like ThuisbatterijGids -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #f8fafc; border-top: 1px solid #f0f0f0;">
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">1 499 €</span>
+        <span style="font-size: 11px; color: #94a3b8;">· 4 shops</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600; color: #3b82f6;">Voir le test →</div>
+    </div>
+  </div>
+
+  <!-- Battery Card 2 -->
+  <div style="margin: 0 20px 12px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+    <div style="display: flex; gap: 14px; padding: 16px;">
+      <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(#65a30d 0% 85%, #e5e7eb 85% 100%); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">8.5</div>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+          <span style="font-size: 11px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.5px;">EcoFlow</span>
+          <span style="font-size: 10px; padding: 1px 6px; background: #dbeafe; color: #1e40af; border-radius: 3px; font-weight: 600;">Meilleure puissance</span>
+        </div>
+        <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 6px;">Delta Pro 3</div>
+        <div style="display: flex; gap: 12px; font-size: 12px; color: #64748b;">
+          <span>4 kWh</span>
+          <span>3 600 W</span>
+          <span>Plug-in</span>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #f8fafc; border-top: 1px solid #f0f0f0;">
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">2 799 €</span>
+        <span style="font-size: 11px; color: #94a3b8;">· 3 shops</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600; color: #3b82f6;">Voir le test →</div>
+    </div>
+  </div>
+
+  <!-- Battery Card 3 -->
+  <div style="margin: 0 20px 12px; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;">
+    <div style="display: flex; gap: 14px; padding: 16px;">
+      <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(#ca8a04 0% 78%, #e5e7eb 78% 100%); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">7.8</div>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 11px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Anker</div>
+        <div style="font-weight: 700; font-size: 16px; color: #0f172a; margin-bottom: 6px;">SOLIX E1600</div>
+        <div style="display: flex; gap: 12px; font-size: 12px; color: #64748b;">
+          <span>1.6 kWh</span>
+          <span>800 W</span>
+          <span>Plug-in</span>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #f8fafc; border-top: 1px solid #f0f0f0;">
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a; font-variant-numeric: tabular-nums;">798 €</span>
+        <span style="font-size: 11px; color: #94a3b8;">· 5 shops</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600; color: #3b82f6;">Voir le test →</div>
+    </div>
+  </div>
+
+  <!-- Quick compare CTA -->
+  <div style="margin: 12px 20px 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 18px;">⚖️</span>
+    <div>
+      <div style="font-size: 13px; font-weight: 600; color: #1e40af;">Comparer les batteries</div>
+      <div style="font-size: 12px; color: #3b82f6;">Sélectionnez 2-3 batteries pour une comparaison détaillée</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
