@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #faf9f6; color: #1c1917; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<!-- Direction 3: "Warm Expert" — Inspired by Which? × EnergySage
+     Fraunces display + Plus Jakarta Sans body. Warm stone ground #faf9f6,
+     terracotta-olive accent duo. Emphasis on guidance, user scenarios,
+     trust. Cards with image area + verdict sentence. -->
+
+<div style="width: 390px; min-height: 844px; background: #faf9f6; overflow: hidden;">
+
+  <!-- Header -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #fff; border-bottom: 1px solid #ebe8e2;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 28px; height: 28px; border-radius: 8px; background: #4d7c0f; display: flex; align-items: center; justify-content: center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="4" width="10" height="16" rx="2" stroke="#fff" stroke-width="2"/><rect x="10" y="8" width="4" height="6" fill="#fff"/></svg>
+      </div>
+      <span style="font-weight: 700; font-size: 15px; letter-spacing: -0.3px; color: #1c1917;">Battery<span style="color: #4d7c0f;">Advisor</span><span style="color: #a8a29e; font-weight: 400;">.be</span></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Hero — warm, guidance-first -->
+  <div style="padding: 32px 20px 28px; background: linear-gradient(180deg, #fff 0%, #faf9f6 100%);">
+    <div style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; background: #f0fdf4; border-radius: 6px; margin-bottom: 14px;">
+      <span style="font-size: 13px;">🇧🇪</span>
+      <span style="font-size: 12px; font-weight: 600; color: #15803d;">Guide indépendant pour la Belgique</span>
+    </div>
+    <h1 style="font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 700; line-height: 1.2; color: #1c1917; margin: 0 0 10px; font-optical-sizing: auto;">
+      Quelle batterie correspond à votre situation ?
+    </h1>
+    <p style="font-size: 15px; line-height: 1.6; color: #78716c; margin: 0 0 22px;">
+      Nous testons chaque batterie en conditions réelles et expliquons les résultats sans jargon.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <div style="padding: 11px 20px; background: #4d7c0f; color: #fff; font-size: 14px; font-weight: 600; border-radius: 10px;">🧭 Trouvez votre batterie</div>
+      <div style="padding: 11px 18px; border: 1.5px solid #d6d3cd; color: #44403c; font-size: 14px; font-weight: 600; border-radius: 10px;">Tout voir</div>
+    </div>
+  </div>
+
+  <!-- Use-case cards — Solar.com inspired, scenario-driven -->
+  <div style="padding: 24px 20px 20px;">
+    <div style="font-size: 13px; font-weight: 700; color: #44403c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Pour quel besoin ?</div>
+    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+      <div style="flex-shrink: 0; width: 130px; padding: 16px 14px; background: #fff; border: 1.5px solid #ebe8e2; border-radius: 12px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">💰</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1c1917; line-height: 1.3;">Réduire ma facture</div>
+      </div>
+      <div style="flex-shrink: 0; width: 130px; padding: 16px 14px; background: #fff; border: 1.5px solid #ebe8e2; border-radius: 12px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">☀️</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1c1917; line-height: 1.3;">Stocker mon solaire</div>
+      </div>
+      <div style="flex-shrink: 0; width: 130px; padding: 16px 14px; background: #fff; border: 1.5px solid #ebe8e2; border-radius: 12px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 8px;">🔌</div>
+        <div style="font-size: 13px; font-weight: 600; color: #1c1917; line-height: 1.3;">Secours en cas de coupure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section header -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 20px 14px;">
+    <div style="font-family: 'Fraunces', Georgia, serif; font-size: 20px; font-weight: 700; color: #1c1917;">Nos recommandations</div>
+    <div style="font-size: 13px; font-weight: 600; color: #4d7c0f;">Filtrer →</div>
+  </div>
+
+  <!-- Battery Card 1 — image area + verdict + horizontal specs -->
+  <div style="margin: 0 20px 14px; background: #fff; border: 1.5px solid #ebe8e2; border-radius: 14px; overflow: hidden;">
+    <!-- Image area -->
+    <div style="background: #f5f3ef; height: 140px; display: flex; align-items: center; justify-content: center; position: relative;">
+      <div style="font-size: 52px; opacity: 0.15;">🔋</div>
+      <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 5px;">
+        <span style="font-size: 10px; padding: 3px 8px; background: #fff; border-radius: 6px; font-weight: 600; color: #b45309; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">⭐ Coup de cœur</span>
+        <span style="font-size: 10px; padding: 3px 8px; background: #fff; border-radius: 6px; font-weight: 600; color: #15803d; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">🇧🇪</span>
+      </div>
+      <!-- Score pill -->
+      <div style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: #4d7c0f; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; font-variant-numeric: tabular-nums;">9.2</div>
+    </div>
+
+    <div style="padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: #4d7c0f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Zendure</div>
+      <div style="font-weight: 700; font-size: 17px; color: #1c1917; margin-bottom: 8px;">SolarFlow Hub 2000</div>
+
+      <!-- Verdict sentence — EnergySage "Bottom line" style -->
+      <p style="font-size: 13px; line-height: 1.5; color: #78716c; margin: 0 0 12px; padding: 10px 12px; background: #faf9f6; border-radius: 8px; border-left: 3px solid #4d7c0f;">
+        Le meilleur rapport qualité-prix pour un système plug-in extensible. Installation en 30 minutes, app intuitive.
+      </p>
+
+      <!-- Horizontal specs -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 14px;">
+        <div style="text-align: center;">
+          <div style="font-size: 10px; color: #a8a29e; margin-bottom: 2px;">Capacité</div>
+          <div style="font-weight: 700; font-size: 14px; color: #1c1917;">4 kWh</div>
+        </div>
+        <div style="width: 1px; background: #ebe8e2;"></div>
+        <div style="text-align: center;">
+          <div style="font-size: 10px; color: #a8a29e; margin-bottom: 2px;">Puissance</div>
+          <div style="font-weight: 700; font-size: 14px; color: #1c1917;">1 200 W</div>
+        </div>
+        <div style="width: 1px; background: #ebe8e2;"></div>
+        <div style="text-align: center;">
+          <div style="font-size: 10px; color: #a8a29e; margin-bottom: 2px;">Garantie</div>
+          <div style="font-weight: 700; font-size: 14px; color: #1c1917;">10 ans</div>
+        </div>
+      </div>
+
+      <!-- Price + CTA -->
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 10px; color: #a8a29e;">À partir de</div>
+          <div style="font-weight: 700; font-size: 20px; color: #1c1917; font-variant-numeric: tabular-nums;">1 499 €</div>
+          <div style="font-size: 11px; color: #78716c;">4 shops comparés</div>
+        </div>
+        <div style="padding: 10px 16px; background: #4d7c0f; color: #fff; font-size: 13px; font-weight: 600; border-radius: 10px;">Lire le test</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Battery Card 2 — more compact -->
+  <div style="margin: 0 20px 14px; background: #fff; border: 1.5px solid #ebe8e2; border-radius: 14px; overflow: hidden;">
+    <div style="background: #f5f3ef; height: 120px; display: flex; align-items: center; justify-content: center; position: relative;">
+      <div style="font-size: 44px; opacity: 0.15;">🔋</div>
+      <div style="position: absolute; top: 10px; left: 10px;">
+        <span style="font-size: 10px; padding: 3px 8px; background: #fff; border-radius: 6px; font-weight: 600; color: #1e40af; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">⚡ Meilleure puissance</span>
+      </div>
+      <div style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: #65a30d; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; font-variant-numeric: tabular-nums;">8.5</div>
+    </div>
+    <div style="padding: 16px;">
+      <div style="font-size: 11px; font-weight: 600; color: #4d7c0f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">EcoFlow</div>
+      <div style="font-weight: 700; font-size: 17px; color: #1c1917; margin-bottom: 8px;">Delta Pro 3</div>
+      <p style="font-size: 13px; line-height: 1.5; color: #78716c; margin: 0 0 12px; padding: 10px 12px; background: #faf9f6; border-radius: 8px; border-left: 3px solid #65a30d;">
+        La puissance la plus élevée de sa catégorie. Idéal pour alimenter gros appareils et recharge EV.
+      </p>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 10px; color: #a8a29e;">À partir de</div>
+          <div style="font-weight: 700; font-size: 20px; color: #1c1917; font-variant-numeric: tabular-nums;">2 799 €</div>
+        </div>
+        <div style="padding: 10px 16px; background: #4d7c0f; color: #fff; font-size: 13px; font-weight: 600; border-radius: 10px;">Lire le test</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
