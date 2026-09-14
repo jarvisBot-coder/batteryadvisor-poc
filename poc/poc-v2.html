@@ -1,0 +1,1215 @@
+<title>BatteryAdvisor POC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+
+<style>
+/* ââ Tokens ââ */
+:root {
+  --ground: #faf9f6;
+  --card: #ffffff;
+  --border: #e8e4dd;
+  --border-light: #f0ede8;
+  --text: #1c1917;
+  --text-mid: #44403c;
+  --text-muted: #78716c;
+  --text-light: #a8a29e;
+  --primary: #4d7c0f;
+  --primary-hover: #3f6b0d;
+  --primary-bg: #f0fdf4;
+  --primary-border: #bbf7d0;
+  --accent-blue: #1e40af;
+  --accent-blue-bg: #dbeafe;
+  --accent-amber: #b45309;
+  --accent-amber-bg: #fef3c7;
+  --score-excellent: #16a34a;
+  --score-good: #65a30d;
+  --score-avg: #ca8a04;
+  --score-below: #ea580c;
+  --score-poor: #dc2626;
+  --surface-alt: #f5f3ef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 5px;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #111110;
+    --card: #1a1918;
+    --border: #2a2825;
+    --border-light: #222120;
+    --text: #e7e5e3;
+    --text-mid: #c8c4bf;
+    --text-muted: #8c877f;
+    --text-light: #5c5650;
+    --primary: #84cc16;
+    --primary-hover: #a3e635;
+    --primary-bg: rgba(77,124,15,0.15);
+    --primary-border: rgba(77,124,15,0.3);
+    --accent-blue: #60a5fa;
+    --accent-blue-bg: rgba(30,64,175,0.2);
+    --accent-amber: #fbbf24;
+    --accent-amber-bg: rgba(180,83,9,0.2);
+    --surface-alt: #1f1e1c;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --card: #1c1b19;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #111110;
+  --card: #1c1b19;
+  --border: #2a2825;
+  --border-light: #222120;
+  --text: #e7e5e3;
+  --text-mid: #c8c4bf;
+  --text-muted: #8c877f;
+  --text-light: #5c5650;
+  --primary: #84cc16;
+  --primary-hover: #a3e635;
+  --primary-bg: rgba(77,124,15,0.15);
+  --primary-border: rgba(77,124,15,0.3);
+  --accent-blue: #60a5fa;
+  --accent-blue-bg: rgba(30,64,175,0.2);
+  --accent-amber: #fbbf24;
+  --accent-amber-bg: rgba(180,83,9,0.2);
+  --surface-alt: #1f1e1c;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ââ Base ââ */
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  padding: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ââ Header ââ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+}
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-icon {
+  width: 28px; height: 28px; border-radius: 8px; background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-icon svg { width: 14px; height: 14px; }
+.logo-text { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; color: var(--text); }
+.logo-text span { color: var(--primary); }
+.logo-text .tld { color: var(--text-light); font-weight: 400; }
+.header-icons { display: flex; gap: 12px; }
+.header-icons svg { width: 18px; height: 18px; stroke: var(--text-muted); cursor: pointer; }
+
+/* ââ Page Nav ââ */
+.page-nav {
+  display: flex; gap: 2px; padding: 8px 16px;
+  background: var(--card); border-bottom: 1px solid var(--border);
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.page-nav button {
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  padding: 7px 14px; border: none; border-radius: 6px;
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  white-space: nowrap; transition: all 0.15s;
+}
+.page-nav button.active {
+  background: var(--primary); color: #fff; font-weight: 600;
+}
+
+/* ââ Pages ââ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ââ Score circle ââ */
+.score-circle {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.score-circle-inner {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums;
+}
+
+/* ââ Score bar ââ */
+.score-bar-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.score-bar-label { font-size: 12px; color: var(--text-muted); width: 90px; flex-shrink: 0; }
+.score-bar-track {
+  flex: 1; height: 6px; background: var(--surface-alt);
+  border-radius: 3px; overflow: hidden;
+}
+.score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.score-bar-value {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  width: 28px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+
+/* ââ Utility ââ */
+.section-pad { padding: 0 20px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 9px;
+  border-radius: var(--radius-xs);
+}
+.badge-green { background: var(--primary-bg); color: var(--primary); border: 1px solid var(--primary-border); }
+.badge-blue { background: var(--accent-blue-bg); color: var(--accent-blue); }
+.badge-amber { background: var(--accent-amber-bg); color: var(--accent-amber); }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 20px; background: var(--primary); color: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  border-radius: 10px; border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 18px; border: 1.5px solid var(--border);
+  color: var(--text-mid); font-family: var(--font-body);
+  font-size: 14px; font-weight: 600; border-radius: 10px;
+  background: transparent; cursor: pointer;
+}
+
+.card {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+h2.section-title {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  color: var(--text); margin: 0;
+  font-optical-sizing: auto;
+}
+
+.verdict {
+  font-size: 13px; line-height: 1.55; color: var(--text-muted);
+  margin: 0; padding: 10px 12px; background: var(--surface-alt);
+  border-radius: var(--radius-sm); border-left: 3px solid var(--primary);
+}
+
+.filter-pill {
+  font-family: var(--font-body); font-size: 12px; padding: 6px 14px;
+  border-radius: 6px; font-weight: 500; white-space: nowrap; border: none; cursor: pointer;
+}
+.filter-pill.active { background: var(--primary); color: #fff; font-weight: 600; }
+.filter-pill:not(.active) { background: var(--surface-alt); color: var(--text-muted); }
+
+/* Scroll container */
+.hscroll {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.hscroll::-webkit-scrollbar { display: none; }
+
+/* Spec grid on detail page */
+.spec-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.spec-box {
+  background: var(--surface-alt); border-radius: var(--radius-sm); padding: 12px;
+}
+.spec-box-label { font-size: 11px; color: var(--text-light); margin-bottom: 2px; }
+.spec-box-value { font-weight: 700; font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* Pro/Con */
+.pro-con-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pro-box, .con-box { border-radius: var(--radius-sm); padding: 14px; }
+.pro-box { background: #f0fdf4; }
+.con-box { background: #fefce8; }
+:root[data-theme="dark"] .pro-box,
+:root:not([data-theme="light"]) .pro-box { background: rgba(22,163,74,0.08); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .pro-box { background: rgba(22,163,74,0.08); }
+  :root:not([data-theme="light"]) .con-box { background: rgba(202,138,4,0.08); }
+}
+:root[data-theme="dark"] .con-box { background: rgba(202,138,4,0.08); }
+.pro-box h4 { font-size: 13px; font-weight: 700; color: var(--score-excellent); margin: 0 0 8px; }
+.con-box h4 { font-size: 13px; font-weight: 700; color: var(--score-avg); margin: 0 0 8px; }
+.pro-box li, .con-box li {
+  font-size: 13px; color: var(--text-muted); line-height: 1.5;
+  list-style: none; padding-left: 16px; position: relative; margin-bottom: 4px;
+}
+.pro-box li::before { content: "â"; position: absolute; left: 0; color: var(--score-excellent); font-weight: 700; }
+.con-box li::before { content: "â"; position: absolute; left: 2px; color: var(--score-avg); font-weight: 700; }
+
+/* Shop row */
+.shop-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+/* Blog card */
+.blog-card .blog-img {
+  height: 140px; background: var(--surface-alt);
+  display: flex; align-items: center; justify-content: center; font-size: 40px; opacity: 0.2;
+}
+
+/* Footer */
+.footer {
+  padding: 28px 20px; margin-top: 16px;
+  border-top: 1px solid var(--border); text-align: center;
+}
+.footer p { font-size: 12px; color: var(--text-light); margin: 0 0 4px; line-height: 1.5; }
+.footer a { color: var(--primary); text-decoration: none; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: 12px; color: var(--text-light); padding: 14px 20px 0; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb span { margin: 0 5px; }
+
+/* Tabs detail */
+.detail-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border); margin: 0 20px;
+}
+.detail-tab {
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  padding: 10px 16px; border: none; background: transparent;
+  color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.detail-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* Methodology */
+.method-box {
+  padding: 14px; background: var(--surface-alt); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.method-tag {
+  font-size: 11px; padding: 3px 8px; background: var(--card);
+  border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted);
+}
+
+/* Use-case card */
+.usecase-card {
+  flex-shrink: 0; width: 135px; padding: 18px 14px;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: var(--radius); text-align: center; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.usecase-card:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+.usecase-emoji { font-size: 30px; margin-bottom: 8px; }
+.usecase-label { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+
+/* Price highlight */
+.price-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--primary-bg); border-radius: var(--radius-sm);
+  border: 1px solid var(--primary-border);
+}
+
+/* Image placeholder */
+.img-placeholder {
+  background: var(--surface-alt); display: flex; align-items: center;
+  justify-content: center; position: relative;
+}
+.img-placeholder .emoji { font-size: 52px; opacity: 0.15; }
+
+/* Comparison CTA */
+.compare-cta {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; background: var(--accent-blue-bg);
+  border: 1px solid rgba(30,64,175,0.15); border-radius: var(--radius-sm);
+}
+
+/* Stats bar */
+.stats-bar {
+  display: flex; margin: 0 20px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;
+}
+.stat-item {
+  flex: 1; padding: 14px; text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-number {
+  font-family: var(--font-display); font-size: 22px;
+  font-weight: 700; color: var(--primary);
+}
+.stat-label {
+  font-size: 10px; color: var(--text-light); margin-top: 2px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+</style>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- HEADER -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<header class="header">
+  <a class="logo" href="#" onclick="return false">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="7" y="4" width="10" height="16" rx="2" stroke="#fff" stroke-width="2.2"/><rect x="10" y="8" width="4" height="6" fill="#fff"/></svg>
+    </div>
+    <div class="logo-text">Battery<span>Advisor</span><span class="tld">.be</span></div>
+  </a>
+  <div class="header-icons">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+</header>
+
+<!-- Page Nav -->
+<nav class="page-nav" id="pageNav">
+  <button class="active" data-page="home">Accueil</button>
+  <button data-page="list">Batteries</button>
+  <button data-page="detail">Fiche produit</button>
+  <button data-page="compare">Comparateur</button>
+  <button data-page="blog">Blog</button>
+</nav>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- PAGE: ACCUEIL -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <div style="padding: 32px 20px 24px; background: linear-gradient(180deg, var(--card) 0%, var(--ground) 100%);">
+    <div class="badge badge-green" style="margin-bottom: 14px;">ð§ðª GUIDE INDÃPENDANT Â· BELGIQUE</div>
+    <h1 style="font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1.2; color: var(--text); margin: 0 0 10px; font-optical-sizing: auto;">
+      Quelle batterie correspond Ã  votre situation ?
+    </h1>
+    <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 22px;">
+      Nous testons chaque batterie en conditions rÃ©elles et expliquons les rÃ©sultats sans jargon technique.
+    </p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button class="btn-primary">ð§­ Trouvez votre batterie</button>
+      <button class="btn-outline">Voir le classement</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" style="margin-bottom: 24px;">
+    <div class="stat-item">
+      <div class="stat-number">24</div>
+      <div class="stat-label">TestÃ©es</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">12</div>
+      <div class="stat-label">Marques</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">798â¬</div>
+      <div class="stat-label">DÃ¨s</div>
+    </div>
+  </div>
+
+  <!-- Use cases -->
+  <div class="section-pad" style="margin-bottom: 20px;">
+    <div style="font-size: 12px; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Pour quel besoin ?</div>
+    <div class="hscroll" style="margin: 0 -20px; padding: 0 20px;">
+      <div class="usecase-card">
+        <div class="usecase-emoji">ð°</div>
+        <div class="usecase-label">RÃ©duire ma facture</div>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-emoji">âï¸</div>
+        <div class="usecase-label">Stocker mon solaire</div>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-emoji">ð</div>
+        <div class="usecase-label">Secours coupure</div>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-emoji">ð</div>
+        <div class="usecase-label">Recharge EV</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="section-pad" style="margin-bottom: 24px;">
+    <div class="method-box">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Notre mÃ©thodologie de scoring</div>
+      <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px;">
+        <span class="method-tag">Performance <span style="color: var(--text-light);">25%</span></span>
+        <span class="method-tag">App <span style="color: var(--text-light);">20%</span></span>
+        <span class="method-tag">Prix/QualitÃ© <span style="color: var(--text-light);">20%</span></span>
+        <span class="method-tag">Installation <span style="color: var(--text-light);">15%</span></span>
+        <span class="method-tag">QualitÃ© <span style="color: var(--text-light);">20%</span></span>
+      </div>
+      <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500;">Comment nous testons â</a>
+    </div>
+  </div>
+
+  <!-- Top batteries -->
+  <div class="section-pad" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+    <h2 class="section-title">Nos recommandations</h2>
+    <a href="#" style="font-size: 13px; font-weight: 600; color: var(--primary); text-decoration: none;">Tout voir â</a>
+  </div>
+
+  <!-- Card 1 -->
+  <div class="section-pad" style="margin-bottom: 12px;">
+    <div class="card">
+      <div class="img-placeholder" style="height: 140px;">
+        <div class="emoji">ð</div>
+        <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 5px;">
+          <span class="badge badge-amber">â­ Coup de cÅur</span>
+          <span class="badge badge-green">ð§ðª</span>
+        </div>
+        <div style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: var(--score-excellent); color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; font-variant-numeric: tabular-nums;">9.2</div>
+      </div>
+      <div style="padding: 14px 16px;">
+        <div style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Zendure</div>
+        <div style="font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px;">SolarFlow Hub 2000</div>
+        <p class="verdict">Le meilleur rapport qualitÃ©-prix pour un systÃ¨me plug-in extensible. Installation en 30 min, app intuitive.</p>
+        <div style="display: flex; justify-content: space-between; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--border-light);">
+          <div style="display: flex; gap: 14px; font-size: 12px; color: var(--text-muted);">
+            <span>4 kWh</span><span>1 200 W</span><span>Plug-in</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
+          <div>
+            <div style="font-size: 10px; color: var(--text-light);">Ã partir de</div>
+            <div style="font-weight: 700; font-size: 20px; color: var(--text); font-variant-numeric: tabular-nums;">1 499 â¬</div>
+            <div style="font-size: 11px; color: var(--text-muted);">4 shops comparÃ©s</div>
+          </div>
+          <button class="btn-primary" style="padding: 9px 16px; font-size: 13px;">Lire le test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="section-pad" style="margin-bottom: 12px;">
+    <div class="card">
+      <div class="img-placeholder" style="height: 120px;">
+        <div class="emoji">ð</div>
+        <div style="position: absolute; top: 10px; left: 10px;"><span class="badge badge-blue">â¡ Meilleure puissance</span></div>
+        <div style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: var(--score-good); color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; font-variant-numeric: tabular-nums;">8.5</div>
+      </div>
+      <div style="padding: 14px 16px;">
+        <div style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">EcoFlow</div>
+        <div style="font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px;">Delta Pro 3</div>
+        <p class="verdict">La puissance la plus Ã©levÃ©e de sa catÃ©gorie. IdÃ©al pour alimenter gros appareils et recharge EV.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light);">
+          <div>
+            <div style="font-size: 10px; color: var(--text-light);">Ã partir de</div>
+            <div style="font-weight: 700; font-size: 20px; color: var(--text); font-variant-numeric: tabular-nums;">2 799 â¬</div>
+          </div>
+          <button class="btn-primary" style="padding: 9px 16px; font-size: 13px;">Lire le test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 â Budget pick -->
+  <div class="section-pad" style="margin-bottom: 20px;">
+    <div class="card">
+      <div class="img-placeholder" style="height: 120px;">
+        <div class="emoji">ð</div>
+        <div style="position: absolute; top: 10px; left: 10px;"><span class="badge badge-green">ð° Meilleur budget</span></div>
+        <div style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; background: var(--score-avg); color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; font-variant-numeric: tabular-nums;">7.8</div>
+      </div>
+      <div style="padding: 14px 16px;">
+        <div style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Anker</div>
+        <div style="font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px;">SOLIX E1600</div>
+        <p class="verdict">EntrÃ©e de gamme solide pour dÃ©buter. Compact, facile Ã  installer, avec un prix imbattable par kWh.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light);">
+          <div>
+            <div style="font-size: 10px; color: var(--text-light);">Ã partir de</div>
+            <div style="font-weight: 700; font-size: 20px; color: var(--text); font-variant-numeric: tabular-nums;">798 â¬</div>
+          </div>
+          <button class="btn-primary" style="padding: 9px 16px; font-size: 13px;">Lire le test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare CTA -->
+  <div class="section-pad" style="margin-bottom: 24px;">
+    <div class="compare-cta">
+      <span style="font-size: 24px;">âï¸</span>
+      <div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent-blue);">Comparer les batteries</div>
+        <div style="font-size: 12px; color: var(--text-muted);">SÃ©lectionnez 2-3 modÃ¨les pour une comparaison dÃ©taillÃ©e</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog section -->
+  <div class="section-pad" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+    <h2 class="section-title">Derniers articles</h2>
+    <a href="#" style="font-size: 13px; font-weight: 600; color: var(--primary); text-decoration: none;">Blog â</a>
+  </div>
+  <div class="section-pad" style="margin-bottom: 20px;">
+    <div class="hscroll" style="margin: 0 -20px; padding: 0 20px;">
+      <div class="card blog-card" style="flex-shrink: 0; width: 260px;">
+        <div class="blog-img">ð°</div>
+        <div style="padding: 12px 14px;">
+          <span class="badge badge-green" style="margin-bottom: 6px; font-size: 10px;">Guide</span>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.35; margin-bottom: 6px;">Batterie plug-in vs hybride : quel systÃ¨me choisir en 2026 ?</div>
+          <div style="font-size: 12px; color: var(--text-light);">5 min Â· 12 sept 2026</div>
+        </div>
+      </div>
+      <div class="card blog-card" style="flex-shrink: 0; width: 260px;">
+        <div class="blog-img">ð</div>
+        <div style="padding: 12px 14px;">
+          <span class="badge badge-blue" style="margin-bottom: 6px; font-size: 10px;">Comparatif</span>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.35; margin-bottom: 6px;">Top 5 batteries pour tarif dynamique en Belgique</div>
+          <div style="font-size: 12px; color: var(--text-light);">8 min Â· 8 sept 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>BatteryAdvisor.be â Guide indÃ©pendant des batteries domestiques en Belgique</p>
+    <p>Certains liens sont des liens affiliÃ©s. <a href="#">Politique de transparence</a></p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- PAGE: BATTERIES LIST -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-list">
+
+  <div style="padding: 20px 20px 14px;">
+    <h1 style="font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 4px;">Toutes les batteries</h1>
+    <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 14px;">24 batteries testÃ©es Â· prix mis Ã  jour quotidiennement</p>
+
+    <!-- Filters -->
+    <div style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px;">
+      <button class="filter-pill active">Tous</button>
+      <button class="filter-pill">Plug-in</button>
+      <button class="filter-pill">< 2 000 â¬</button>
+      <button class="filter-pill">ð§ðª ApprouvÃ©</button>
+      <button class="filter-pill">â¥ 8/10</button>
+    </div>
+
+    <!-- Sort -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+      <span style="font-size: 12px; color: var(--text-light);">TriÃ© par : <span style="color: var(--text-mid); font-weight: 600;">Score â</span></span>
+      <span style="font-size: 12px; color: var(--primary); font-weight: 500; cursor: pointer;">âï¸ Comparer (0)</span>
+    </div>
+  </div>
+
+  <!-- List cards â compact with score circle + verdict -->
+  <div class="section-pad" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+
+    <!-- Item 1 -->
+    <div class="card" style="display: flex; gap: 0;">
+      <div style="padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border-light); min-width: 74px;">
+        <div class="score-circle" style="background: conic-gradient(var(--score-excellent) 0% 92%, var(--surface-alt) 92% 100%);">
+          <div class="score-circle-inner" style="color: var(--score-excellent);">9.2</div>
+        </div>
+        <span style="font-size: 10px; color: var(--text-light); margin-top: 4px;">NÂ°1</span>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+          <span style="font-size: 10px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Zendure</span>
+          <span class="badge badge-amber" style="font-size: 9px; padding: 1px 6px;">Coup de cÅur</span>
+          <span style="font-size: 9px; padding: 1px 5px; background: var(--primary-bg); color: var(--primary); border-radius: 3px; font-weight: 600;">ð§ðª</span>
+        </div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px;">SolarFlow Hub 2000</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">4 kWh Â· 1 200 W Â· Plug-in</div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">1 499 â¬</span>
+            <span style="font-size: 11px; color: var(--text-light);">Â· 4 shops</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: var(--primary);">Test â</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="card" style="display: flex; gap: 0;">
+      <div style="padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border-light); min-width: 74px;">
+        <div class="score-circle" style="background: conic-gradient(var(--score-good) 0% 85%, var(--surface-alt) 85% 100%);">
+          <div class="score-circle-inner" style="color: var(--score-good);">8.5</div>
+        </div>
+        <span style="font-size: 10px; color: var(--text-light); margin-top: 4px;">NÂ°2</span>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+          <span style="font-size: 10px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">EcoFlow</span>
+          <span class="badge badge-blue" style="font-size: 9px; padding: 1px 6px;">Meilleure puissance</span>
+        </div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px;">Delta Pro 3</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">4 kWh Â· 3 600 W Â· Plug-in</div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">2 799 â¬</span>
+            <span style="font-size: 11px; color: var(--text-light);">Â· 3 shops</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: var(--primary);">Test â</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="card" style="display: flex; gap: 0;">
+      <div style="padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border-light); min-width: 74px;">
+        <div class="score-circle" style="background: conic-gradient(var(--score-good) 0% 82%, var(--surface-alt) 82% 100%);">
+          <div class="score-circle-inner" style="color: var(--score-good);">8.2</div>
+        </div>
+        <span style="font-size: 10px; color: var(--text-light); margin-top: 4px;">NÂ°3</span>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+          <span style="font-size: 10px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Bluetti</span>
+        </div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px;">EP760 + B500</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">9.9 kWh Â· 7 600 W Â· Hybride</div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">5 499 â¬</span>
+            <span style="font-size: 11px; color: var(--text-light);">Â· 2 shops</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: var(--primary);">Test â</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="card" style="display: flex; gap: 0;">
+      <div style="padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border-light); min-width: 74px;">
+        <div class="score-circle" style="background: conic-gradient(var(--score-avg) 0% 78%, var(--surface-alt) 78% 100%);">
+          <div class="score-circle-inner" style="color: var(--score-avg);">7.8</div>
+        </div>
+        <span style="font-size: 10px; color: var(--text-light); margin-top: 4px;">NÂ°4</span>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+          <span style="font-size: 10px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Anker</span>
+          <span class="badge badge-green" style="font-size: 9px; padding: 1px 6px;">Budget</span>
+        </div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px;">SOLIX E1600</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">1.6 kWh Â· 800 W Â· Plug-in</div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <div style="display: flex; align-items: baseline; gap: 5px;">
+            <span style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">798 â¬</span>
+            <span style="font-size: 11px; color: var(--text-light);">Â· 5 shops</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: var(--primary);">Test â</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>BatteryAdvisor.be â 24 batteries testÃ©es indÃ©pendamment</p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- PAGE: FICHE PRODUIT (Detail) -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-detail">
+
+  <div class="breadcrumb">
+    <a href="#">Accueil</a><span>/</span><a href="#">Batteries</a><span>/</span>SolarFlow Hub 2000
+  </div>
+
+  <!-- Product header -->
+  <div style="padding: 16px 20px 0;">
+    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+      <span style="font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">Zendure</span>
+      <span class="badge badge-green" style="font-size: 10px;">ð§ðª ApprouvÃ©</span>
+    </div>
+    <h1 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--text); margin: 0 0 4px;">SolarFlow Hub 2000</h1>
+    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Batterie domestique plug-in Â· TestÃ© en aoÃ»t 2026</p>
+  </div>
+
+  <!-- Image -->
+  <div class="section-pad" style="margin-top: 16px;">
+    <div class="img-placeholder" style="height: 200px; border-radius: var(--radius);">
+      <div class="emoji">ð</div>
+    </div>
+  </div>
+
+  <!-- Score overview -->
+  <div class="section-pad" style="margin-top: 16px;">
+    <div style="display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);">
+      <div class="score-circle" style="width: 64px; height: 64px; background: conic-gradient(var(--score-excellent) 0% 92%, var(--surface-alt) 92% 100%);">
+        <div class="score-circle-inner" style="width: 50px; height: 50px; font-size: 20px; color: var(--score-excellent);">9.2</div>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 16px; color: var(--text);">Score global</div>
+        <div style="font-size: 13px; color: var(--text-muted);">BasÃ© sur 5 critÃ¨res pondÃ©rÃ©s et nos tests en conditions rÃ©elles</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="section-pad" style="margin-top: 14px;">
+    <div style="padding: 14px 16px; background: var(--primary-bg); border: 1px solid var(--primary-border); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+      <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">NOTRE VERDICT</div>
+      <p style="font-size: 14px; line-height: 1.55; color: var(--text); margin: 0;">Le SolarFlow Hub 2000 est notre recommandation nÂ°1 pour les mÃ©nages belges. Excellent rapport qualitÃ©-prix, installation plug-in en 30 minutes, app bien conÃ§ue et extensible jusqu'Ã  16 kWh. IdÃ©al pour stocker votre production solaire et rÃ©duire votre facture.</p>
+    </div>
+  </div>
+
+  <!-- Key specs -->
+  <div class="section-pad" style="margin-top: 16px;">
+    <div class="spec-grid">
+      <div class="spec-box">
+        <div class="spec-box-label">CapacitÃ©</div>
+        <div class="spec-box-value">4 kWh</div>
+      </div>
+      <div class="spec-box">
+        <div class="spec-box-label">Puissance</div>
+        <div class="spec-box-value">1 200 W</div>
+      </div>
+      <div class="spec-box">
+        <div class="spec-box-label">Garantie</div>
+        <div class="spec-box-value">10 ans</div>
+      </div>
+      <div class="spec-box">
+        <div class="spec-box-label">Prix / kWh</div>
+        <div class="spec-box-value">375 â¬</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price CTA -->
+  <div class="section-pad" style="margin-top: 16px;">
+    <div class="price-bar">
+      <div>
+        <div style="font-size: 10px; color: var(--text-light);">Ã partir de</div>
+        <div style="font-weight: 700; font-size: 24px; color: var(--text); font-variant-numeric: tabular-nums;">1 499 â¬</div>
+      </div>
+      <button class="btn-primary" style="padding: 10px 18px;">Voir les prix â</button>
+    </div>
+  </div>
+
+  <!-- Detail tabs -->
+  <div style="margin-top: 20px;">
+    <div class="detail-tabs" id="detailTabs">
+      <button class="detail-tab active" data-tab="scores">Scores</button>
+      <button class="detail-tab" data-tab="specs">Specs</button>
+      <button class="detail-tab" data-tab="review">Avis</button>
+      <button class="detail-tab" data-tab="buy">Acheter</button>
+    </div>
+  </div>
+
+  <!-- Tab content: Scores -->
+  <div class="detail-content active" id="tab-scores" style="padding: 16px 20px;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 14px;">Scores dÃ©taillÃ©s</h3>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="score-bar-row">
+        <div class="score-bar-label">Performance</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 94%; background: var(--score-excellent);"></div></div>
+        <div class="score-bar-value">9.4</div>
+      </div>
+      <div class="score-bar-row">
+        <div class="score-bar-label">App</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 90%; background: var(--score-excellent);"></div></div>
+        <div class="score-bar-value">9.0</div>
+      </div>
+      <div class="score-bar-row">
+        <div class="score-bar-label">Prix / QualitÃ©</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 92%; background: var(--score-excellent);"></div></div>
+        <div class="score-bar-value">9.2</div>
+      </div>
+      <div class="score-bar-row">
+        <div class="score-bar-label">Installation</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 95%; background: var(--score-excellent);"></div></div>
+        <div class="score-bar-value">9.5</div>
+      </div>
+      <div class="score-bar-row">
+        <div class="score-bar-label">QualitÃ© / Finition</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width: 88%; background: var(--score-good);"></div></div>
+        <div class="score-bar-value">8.8</div>
+      </div>
+    </div>
+
+    <!-- Pros / Cons -->
+    <div class="pro-con-grid" style="margin-top: 18px;">
+      <div class="pro-box">
+        <h4>â Points forts</h4>
+        <ul style="margin: 0; padding: 0;">
+          <li>Installation plug-in en 30 min</li>
+          <li>Extensible jusqu'Ã  16 kWh</li>
+          <li>App Zendure intuitive</li>
+          <li>Bon rapport prix/kWh</li>
+        </ul>
+      </div>
+      <div class="con-box">
+        <h4>â ï¸ Ã noter</h4>
+        <ul style="margin: 0; padding: 0;">
+          <li>Puissance limitÃ©e Ã  1 200 W</li>
+          <li>Pas de backup en cas de coupure</li>
+          <li>Design un peu volumineux</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab content: Specs -->
+  <div class="detail-content" id="tab-specs" style="padding: 16px 20px; display: none;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 14px;">CaractÃ©ristiques techniques</h3>
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;">
+      <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+        <tbody>
+          <tr style="background: var(--surface-alt);"><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Type</td><td style="padding: 10px 14px; color: var(--text-muted);">Plug-in</td></tr>
+          <tr><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">CapacitÃ©</td><td style="padding: 10px 14px; color: var(--text-muted);">4 kWh (ext. 16 kWh)</td></tr>
+          <tr style="background: var(--surface-alt);"><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Puissance</td><td style="padding: 10px 14px; color: var(--text-muted);">1 200 W</td></tr>
+          <tr><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Chimie</td><td style="padding: 10px 14px; color: var(--text-muted);">LiFePO4</td></tr>
+          <tr style="background: var(--surface-alt);"><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Cycles</td><td style="padding: 10px 14px; color: var(--text-muted);">6 000</td></tr>
+          <tr><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Poids</td><td style="padding: 10px 14px; color: var(--text-muted);">52 kg</td></tr>
+          <tr style="background: var(--surface-alt);"><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Dimensions</td><td style="padding: 10px 14px; color: var(--text-muted);">48 Ã 44 Ã 18 cm</td></tr>
+          <tr><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Garantie</td><td style="padding: 10px 14px; color: var(--text-muted);">10 ans</td></tr>
+          <tr style="background: var(--surface-alt);"><td style="padding: 10px 14px; font-weight: 500; color: var(--text);">Belgique</td><td style="padding: 10px 14px; color: var(--text-muted);">â ApprouvÃ©</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 18px 0 10px;">FonctionnalitÃ©s</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+      <span style="font-size: 12px; padding: 5px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 6px; font-weight: 500;">â Smart Grid</span>
+      <span style="font-size: 12px; padding: 5px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 6px; font-weight: 500;">â Tarif dynamique</span>
+      <span style="font-size: 12px; padding: 5px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 6px; font-weight: 500;">â Monitoring app</span>
+      <span style="font-size: 12px; padding: 5px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 6px; font-weight: 500;">â Home Assistant</span>
+      <span style="font-size: 12px; padding: 5px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 6px; font-weight: 500;">â Extension modulaire</span>
+    </div>
+  </div>
+
+  <!-- Tab content: Avis -->
+  <div class="detail-content" id="tab-review" style="padding: 16px 20px; display: none;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 14px;">Notre avis complet</h3>
+    <div style="font-size: 14px; line-height: 1.7; color: var(--text-muted);">
+      <p style="margin: 0 0 14px;">Le Zendure SolarFlow Hub 2000 est un systÃ¨me de batterie plug-in qui cible les mÃ©nages souhaitant optimiser leur autoconsommation solaire sans travaux d'installation complexes. Nous l'avons testÃ© pendant 3 mois dans une maison belge avec 10 panneaux solaires.</p>
+      <p style="margin: 0 0 14px;"><strong style="color: var(--text);">Installation :</strong> C'est le point fort majeur du SolarFlow. En 30 minutes chrono, le systÃ¨me Ã©tait opÃ©rationnel. Pas besoin d'Ã©lectricien â on branche, on configure l'app, et c'est parti. L'extension avec des modules AB2000 supplÃ©mentaires est tout aussi simple.</p>
+      <p style="margin: 0 0 14px;"><strong style="color: var(--text);">Performances :</strong> Avec 4 kWh de capacitÃ© et 1 200 W de puissance, le SolarFlow couvre confortablement la consommation nocturne d'un mÃ©nage moyen. La gestion du tarif dynamique via l'app est bien implÃ©mentÃ©e â le systÃ¨me charge automatiquement quand l'Ã©lectricitÃ© est bon marchÃ©.</p>
+      <p style="margin: 0;"><strong style="color: var(--text);">Conclusion :</strong> Si vous cherchez une solution plug-in fiable, extensible et avec un bon rapport qualitÃ©-prix, le SolarFlow Hub 2000 est actuellement notre premiÃ¨re recommandation pour le marchÃ© belge.</p>
+    </div>
+    <div style="font-size: 12px; color: var(--text-light); margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border);">
+      Par Thomas D. Â· Mis Ã  jour le 25 aoÃ»t 2026
+    </div>
+  </div>
+
+  <!-- Tab content: Acheter -->
+  <div class="detail-content" id="tab-buy" style="padding: 16px 20px; display: none;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 14px;">OÃ¹ acheter</h3>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="shop-row">
+        <div>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Zendure.de</div>
+          <div style="font-size: 12px; color: var(--text-light);">ð©ðª Allemagne</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">1 499 â¬</div>
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Voir â</a>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Amazon.de</div>
+          <div style="font-size: 12px; color: var(--text-light);">ð©ðª Allemagne</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">1 549 â¬</div>
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Voir â</a>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Bol.com</div>
+          <div style="font-size: 12px; color: var(--text-light);">ð§ðª Belgique</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">1 599 â¬</div>
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Voir â</a>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Coolblue</div>
+          <div style="font-size: 12px; color: var(--text-light);">ð§ðª Belgique</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 700; font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums;">1 649 â¬</div>
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Voir â</a>
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 11px; color: var(--text-light); margin-top: 12px;">* Certains liens sont affiliÃ©s. <a href="#" style="color: var(--primary); text-decoration: none;">Politique de transparence</a></p>
+  </div>
+
+  <div class="footer">
+    <p>BatteryAdvisor.be</p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- PAGE: COMPARATEUR -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-compare">
+
+  <div style="padding: 20px 20px 16px;">
+    <h1 style="font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 6px;">Comparateur</h1>
+    <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 16px;">Comparez les spÃ©cifications et scores cÃ´te Ã  cÃ´te</p>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="section-pad">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; min-width: 340px; border-collapse: collapse; font-size: 13px;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 10px 12px; font-size: 12px; color: var(--text-light); font-weight: 500; border-bottom: 2px solid var(--border);"></th>
+            <th style="text-align: center; padding: 10px 12px; border-bottom: 2px solid var(--border);">
+              <div style="font-size: 11px; color: var(--primary); font-weight: 600; text-transform: uppercase;">Zendure</div>
+              <div style="font-weight: 700; color: var(--text); font-size: 13px;">Hub 2000</div>
+            </th>
+            <th style="text-align: center; padding: 10px 12px; border-bottom: 2px solid var(--border);">
+              <div style="font-size: 11px; color: var(--primary); font-weight: 600; text-transform: uppercase;">EcoFlow</div>
+              <div style="font-weight: 700; color: var(--text); font-size: 13px;">Delta Pro 3</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: var(--surface-alt);">
+            <td style="padding: 8px 12px; color: var(--text-muted);">Score</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--score-excellent);">9.2</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--score-good);">8.5</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 12px; color: var(--text-muted);">CapacitÃ©</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">4 kWh</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">4 kWh</td>
+          </tr>
+          <tr style="background: var(--surface-alt);">
+            <td style="padding: 8px 12px; color: var(--text-muted);">Puissance</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">1 200 W</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--primary);">3 600 W â</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 12px; color: var(--text-muted);">Prix</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--primary);">1 499 â¬ â</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">2 799 â¬</td>
+          </tr>
+          <tr style="background: var(--surface-alt);">
+            <td style="padding: 8px 12px; color: var(--text-muted);">Prix/kWh</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--primary);">375 â¬ â</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">700 â¬</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 12px; color: var(--text-muted);">Garantie</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">10 ans</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">5 ans</td>
+          </tr>
+          <tr style="background: var(--surface-alt);">
+            <td style="padding: 8px 12px; color: var(--text-muted);">Type</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">Plug-in</td>
+            <td style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--text);">Plug-in</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 12px; color: var(--text-muted);">ð§ðª</td>
+            <td style="padding: 8px 12px; text-align: center;">â</td>
+            <td style="padding: 8px 12px; text-align: center;">â³</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Score comparison bars -->
+  <div class="section-pad" style="margin-top: 20px;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 14px;">Comparaison des scores</h3>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Performance</div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span style="font-size: 11px; color: var(--primary); font-weight: 600; width: 50px;">Hub 2000</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 94%; height: 100%; background: var(--score-excellent); border-radius: 4px;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">9.4</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px;">
+          <span style="font-size: 11px; color: var(--accent-blue); font-weight: 600; width: 50px;">Delta 3</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 88%; height: 100%; background: var(--accent-blue); border-radius: 4px; opacity: 0.7;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">8.8</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">App</div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span style="font-size: 11px; color: var(--primary); font-weight: 600; width: 50px;">Hub 2000</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 90%; height: 100%; background: var(--score-excellent); border-radius: 4px;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">9.0</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px;">
+          <span style="font-size: 11px; color: var(--accent-blue); font-weight: 600; width: 50px;">Delta 3</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 80%; height: 100%; background: var(--accent-blue); border-radius: 4px; opacity: 0.7;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">8.0</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Prix / QualitÃ©</div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span style="font-size: 11px; color: var(--primary); font-weight: 600; width: 50px;">Hub 2000</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 92%; height: 100%; background: var(--score-excellent); border-radius: 4px;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">9.2</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px;">
+          <span style="font-size: 11px; color: var(--accent-blue); font-weight: 600; width: 50px;">Delta 3</span>
+          <div style="flex: 1; height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden;"><div style="width: 72%; height: 100%; background: var(--accent-blue); border-radius: 4px; opacity: 0.7;"></div></div>
+          <span style="font-size: 11px; font-weight: 600; width: 24px; font-variant-numeric: tabular-nums;">7.2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict comparison -->
+  <div class="section-pad" style="margin-top: 20px; margin-bottom: 20px;">
+    <h3 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 10px;">En rÃ©sumÃ©</h3>
+    <div style="padding: 14px; background: var(--surface-alt); border-radius: var(--radius-sm); font-size: 14px; line-height: 1.6; color: var(--text-muted);">
+      Le <strong style="color: var(--text);">Hub 2000</strong> gagne sur le rapport qualitÃ©-prix et l'expÃ©rience utilisateur. Le <strong style="color: var(--text);">Delta Pro 3</strong> s'impose si vous avez besoin de puissance Ã©levÃ©e (3 600 W) pour gros appareils ou backup complet.
+    </div>
+  </div>
+
+  <div class="footer"><p>BatteryAdvisor.be</p></div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- PAGE: BLOG -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-blog">
+
+  <div style="padding: 20px 20px 16px;">
+    <h1 style="font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 4px;">Blog & Guides</h1>
+    <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 14px;">Tout comprendre sur les batteries domestiques, sans jargon</p>
+    <div style="display: flex; gap: 6px; overflow-x: auto;">
+      <button class="filter-pill active">Tous</button>
+      <button class="filter-pill">Guides</button>
+      <button class="filter-pill">Comparatifs</button>
+      <button class="filter-pill">ActualitÃ©s</button>
+      <button class="filter-pill">Technique</button>
+    </div>
+  </div>
+
+  <!-- Featured article -->
+  <div class="section-pad" style="margin-bottom: 16px;">
+    <div class="card">
+      <div class="img-placeholder" style="height: 180px;">
+        <div style="font-size: 60px; opacity: 0.12;">â¡</div>
+        <div style="position: absolute; top: 12px; left: 12px;"><span class="badge badge-green">Guide complet</span></div>
+      </div>
+      <div style="padding: 16px;">
+        <h3 style="font-weight: 700; font-size: 18px; color: var(--text); line-height: 1.3; margin: 0 0 8px;">Batterie domestique en Belgique : le guide ultime 2026</h3>
+        <p style="font-size: 14px; line-height: 1.55; color: var(--text-muted); margin: 0 0 10px;">Tout ce que vous devez savoir avant d'investir : types de batteries, coÃ»ts, rentabilitÃ©, installation et primes disponibles en Wallonie, Flandre et Bruxelles.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 12px; color: var(--text-light);">15 min Â· 10 sept 2026</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--primary);">Lire â</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article list -->
+  <div class="section-pad" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+
+    <div class="card" style="display: flex; gap: 0;">
+      <div class="img-placeholder" style="width: 100px; min-height: 100px; flex-shrink: 0;">
+        <div style="font-size: 28px; opacity: 0.15;">ð</div>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <span class="badge badge-blue" style="font-size: 10px; margin-bottom: 4px;">Comparatif</span>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.3; margin-bottom: 6px;">Top 5 batteries pour tarif dynamique en Belgique</div>
+        <div style="font-size: 12px; color: var(--text-light);">8 min Â· 8 sept 2026</div>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; gap: 0;">
+      <div class="img-placeholder" style="width: 100px; min-height: 100px; flex-shrink: 0;">
+        <div style="font-size: 28px; opacity: 0.15;">ð</div>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <span class="badge badge-green" style="font-size: 10px; margin-bottom: 4px;">Guide</span>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.3; margin-bottom: 6px;">Plug-in vs hybride : quel systÃ¨me choisir ?</div>
+        <div style="font-size: 12px; color: var(--text-light);">5 min Â· 5 sept 2026</div>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; gap: 0;">
+      <div class="img-placeholder" style="width: 100px; min-height: 100px; flex-shrink: 0;">
+        <div style="font-size: 28px; opacity: 0.15;">ð¶</div>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <span class="badge badge-amber" style="font-size: 10px; margin-bottom: 4px;">ActualitÃ©</span>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.3; margin-bottom: 6px;">Primes batteries 2026 : ce qui change en Flandre</div>
+        <div style="font-size: 12px; color: var(--text-light);">3 min Â· 2 sept 2026</div>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; gap: 0;">
+      <div class="img-placeholder" style="width: 100px; min-height: 100px; flex-shrink: 0;">
+        <div style="font-size: 28px; opacity: 0.15;">ð§</div>
+      </div>
+      <div style="flex: 1; padding: 12px 14px;">
+        <span style="display: inline-block; font-size: 10px; padding: 2px 7px; background: #f3e8ff; color: #6b21a8; border-radius: 4px; font-weight: 600; margin-bottom: 4px;">Technique</span>
+        <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.3; margin-bottom: 6px;">LiFePO4 vs NMC : quelle chimie pour votre batterie ?</div>
+        <div style="font-size: 12px; color: var(--text-light);">6 min Â· 28 aoÃ»t 2026</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>BatteryAdvisor.be â Guides et comparatifs indÃ©pendants</p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- JAVASCRIPT -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââ -->
+<script>
+// Page navigation
+document.getElementById('pageNav').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const page = btn.dataset.page;
+
+  document.querySelectorAll('.page-nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+
+  window.scrollTo(0, 0);
+});
+
+// Detail tabs
+document.getElementById('detailTabs')?.addEventListener('click', e => {
+  const btn = e.target.closest('.detail-tab');
+  if (!btn) return;
+  const tab = btn.dataset.tab;
+
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.querySelectorAll('.detail-content').forEach(c => { c.style.display = 'none'; c.classList.remove('active'); });
+  const el = document.getElementById('tab-' + tab);
+  if (el) { el.style.display = 'block'; el.classList.add('active'); }
+});
+
+// Filter pills toggle (visual only)
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    const siblings = pill.parentElement.querySelectorAll('.filter-pill');
+    siblings.forEach(s => s.classList.remove('active'));
+    pill.classList.add('active');
+  });
+});
+</script>
