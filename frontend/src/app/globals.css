@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* ── Design tokens (light – default) ── */
+:root {
+  --color-primary: #0e8a6d;
+  --color-ground: #f7f8fb;
+  --color-card: #ffffff;
+  --color-text: #141b2d;
+  --color-text-mid: #3b4563;
+  --color-text-muted: #6b7490;
+  --color-border: #dfe3ea;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+}
+
+/* ── Dark: system preference (only when no explicit data-theme) ── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #34d399;
+    --color-ground: #0e1117;
+    --color-card: #161b25;
+    --color-text: #e4e7ed;
+    --color-text-mid: #9aa3b8;
+    --color-text-muted: #6b7490;
+    --color-border: #252c3a;
+  }
+}
+
+/* ── Dark: explicit toggle ── */
+:root[data-theme="dark"] {
+  --color-primary: #34d399;
+  --color-ground: #0e1117;
+  --color-card: #161b25;
+  --color-text: #e4e7ed;
+  --color-text-mid: #9aa3b8;
+  --color-text-muted: #6b7490;
+  --color-border: #252c3a;
+}
+
+/* ── Tailwind v4 theme bridge ── */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-ground: var(--color-ground);
+  --color-card: var(--color-card);
+  --color-text: var(--color-text);
+  --color-text-mid: var(--color-text-mid);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+/* ── Base ── */
+body {
+  background: var(--color-ground);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+/* ── Utility classes ── */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.pill {
+  border-radius: var(--radius-pill);
+}
+
+/* ── Score ring ── */
+.score-ring {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
