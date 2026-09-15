@@ -1,0 +1,49 @@
+{
+  "kind": "singleType",
+  "collectionName": "scoring_methodologies",
+  "info": {
+    "singularName": "scoring-methodology",
+    "pluralName": "scoring-methodologies",
+    "displayName": "Scoring Methodology",
+    "description": "Pondération et description de la méthodologie de notation"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "performance_weight": {
+      "type": "integer",
+      "default": 25,
+      "min": 0,
+      "max": 100
+    },
+    "app_weight": {
+      "type": "integer",
+      "default": 20,
+      "min": 0,
+      "max": 100
+    },
+    "value_weight": {
+      "type": "integer",
+      "default": 20,
+      "min": 0,
+      "max": 100
+    },
+    "installation_weight": {
+      "type": "integer",
+      "default": 15,
+      "min": 0,
+      "max": 100
+    },
+    "quality_weight": {
+      "type": "integer",
+      "default": 20,
+      "min": 0,
+      "max": 100
+    },
+    "description": {
+      "type": "richtext"
+    }
+  }
+}
