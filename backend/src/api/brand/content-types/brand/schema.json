@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "brands",
+  "info": {
+    "singularName": "brand",
+    "pluralName": "brands",
+    "displayName": "Brand",
+    "description": "Fabricants de batteries domestiques"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "country": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "website": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "batteries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::battery.battery",
+      "mappedBy": "brand"
+    }
+  }
+}
