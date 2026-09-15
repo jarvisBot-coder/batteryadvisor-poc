@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build
+build/
+dist/
+.cache/
+.tmp/
+
+# Environment
+.env
+
+# Editor
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (keep folder, ignore files)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Database
+*.db
+*.db-journal
