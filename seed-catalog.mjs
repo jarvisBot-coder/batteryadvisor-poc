@@ -92,7 +92,7 @@ const shop = (merchant, price, opts = {}) => ({
 const BATTERIES = [
   {
     slug: "tesla-powerwall-3", brand: "tesla",
-    name: "Tesla Powerwall 3",
+    name: "Powerwall 3",
     capacity_kwh: 13.5, power_watts: 11500, peak_power_watts: 22000, type: "plug-in",
     score_overall: 8.7, score_performance: 9.0, score_app: 9.0, score_value: 7.0,
     score_installation: 7.5, score_quality: 8.0, score_design: 8.5, score_warranty: 7.0,

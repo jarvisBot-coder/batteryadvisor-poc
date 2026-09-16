@@ -63,6 +63,7 @@ function transformBattery(raw: any): Battery {
     capacityKwh: raw.capacity_kwh ?? 0,
     powerKw: raw.power_watts ? raw.power_watts / 1000 : 0,
     chemistry: raw.chemistry ?? "",
+    badge: raw.badge,
     cycleWarrantyYears: raw.warranty_years ?? 0,
     priceEur: raw.price_from,
     // Scores: Strapi stores 0–10, frontend displays 0–100.
@@ -114,7 +115,6 @@ export async function getBatteries() {
   const res = await strapiFetch<StrapiListResponse<any>>("/batteries", {
     "populate[brand]": "true",
     "populate[image]": "true",
-    "populate[category]": "true",
     "sort[0]": "score_overall:desc",
     "pagination[pageSize]": "50",
   });
@@ -131,7 +131,6 @@ export async function getBattery(slug: string) {
     "populate[brand]": "true",
     "populate[image]": "true",
     "populate[gallery]": "true",
-    "populate[category]": "true",
   });
   return res.data[0] ? transformBattery(res.data[0]) : null;
 }

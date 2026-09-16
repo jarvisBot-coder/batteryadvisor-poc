@@ -80,6 +80,7 @@ export interface Battery {
   powerKw: number;
   chemistry: string;
   cycleWarrantyYears: number;
+  badge?: string;
   priceEur?: number;
   scoreOverall: number;
   scoreValue: number;
