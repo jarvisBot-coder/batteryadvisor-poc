@@ -83,6 +83,12 @@ export default async function HomePage() {
               Voir les batteries
             </Link>
             <Link
+              href="/guide"
+              className="pill border border-[var(--color-primary)] px-6 py-3 font-medium text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-white"
+            >
+              Trouver ma batterie
+            </Link>
+            <Link
               href="/comparateur"
               className="pill border border-[var(--color-border)] px-6 py-3 font-medium text-[var(--color-text-mid)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
             >

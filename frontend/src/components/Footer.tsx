@@ -11,7 +11,7 @@ export default function Footer() {
               BatteryAdvisor<span className="text-[var(--color-text-muted)]">.be</span>
             </span>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-              Comparatifs ind\u00e9pendants de batteries domestiques pour la Belgique.
+              Comparatifs indépendants de batteries domestiques pour la Belgique.
               Aucun lien commercial avec les fabricants.
             </p>
           </div>
@@ -25,6 +25,7 @@ export default function Footer() {
               {[
                 { href: "/batteries", label: "Toutes les batteries" },
                 { href: "/comparateur", label: "Comparateur" },
+                { href: "/guide", label: "Guide personnalisé" },
                 { href: "/blog", label: "Blog & guides" },
               ].map((link) => (
                 <li key={link.href}>
@@ -45,16 +46,15 @@ export default function Footer() {
               Informations
             </h4>
             <ul className="space-y-2 text-sm text-[var(--color-text-muted)]">
-              <li>Site ind\u00e9pendant</li>
-              <li>Tests selon m\u00e9thodologie RTINGS</li>
-              <li>Donn\u00e9es mises \u00e0 jour r\u00e9guli\u00e8rement</li>
+              <li>Site indépendant</li>
+              <li>Tests selon méthodologie RTINGS</li>
+              <li>Données mises à jour régulièrement</li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 border-t border-[var(--color-border)] pt-6 text-center text-xs text-[var(--color-text-muted)]">
-          \u00a9 {new Date().getFullYear()} BatteryAdvisor.be \u2014 Tous droits
-          r\u00e9serv\u00e9s
+          © {new Date().getFullYear()} BatteryAdvisor.be — Tous droits réservés
         </div>
       </div>
     </footer>
