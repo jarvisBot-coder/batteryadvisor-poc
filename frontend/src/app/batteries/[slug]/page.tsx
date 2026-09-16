@@ -19,6 +19,7 @@ import SpecsTable from "@/components/SpecsTable";
 import VerdictBox from "@/components/VerdictBox";
 import BatteryImage from "@/components/BatteryImage";
 import CapabilityBadges, { pricePerKwh } from "@/components/CapabilityBadges";
+import AuthorBox from "@/components/AuthorBox";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -229,6 +230,10 @@ export default async function BatteryDetailPage({
           <CapabilityBadges battery={battery} size="md" />
         </div>
       </header>
+
+      <div className="mt-6">
+        <AuthorBox updatedAt={battery.updatedAt} />
+      </div>
 
       {/* Quick take */}
       {battery.quickTake && <QuickTake text={battery.quickTake} />}

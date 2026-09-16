@@ -8,6 +8,7 @@ import { TOPLISTS, getToplist } from "@/lib/toplists";
 import ScoreCircle from "@/components/ScoreCircle";
 import CapabilityBadges, { pricePerKwh } from "@/components/CapabilityBadges";
 import FAQSection from "@/components/FAQSection";
+import AuthorBox from "@/components/AuthorBox";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -147,6 +148,10 @@ export default async function ToplistPage({
           <FAQSection items={t.faq} />
         </div>
       )}
+
+      <div className="mt-8">
+        <AuthorBox />
+      </div>
 
       <p className="mt-6 text-xs text-[var(--color-text-muted)]">
         Classement établi selon notre méthodologie indépendante. Certains liens sont des liens affiliés.

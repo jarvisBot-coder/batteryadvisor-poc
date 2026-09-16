@@ -25,6 +25,8 @@ export default function Footer() {
               {[
                 { href: "/batteries", label: "Toutes les batteries" },
                 { href: "/comparateur", label: "Comparateur" },
+                { href: "/toplistes", label: "Toplistes" },
+                { href: "/marques", label: "Marques" },
                 { href: "/guide", label: "Guide personnalisé" },
                 { href: "/blog", label: "Blog & guides" },
               ].map((link) => (
@@ -45,10 +47,18 @@ export default function Footer() {
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--color-text-mid)]">
               Informations
             </h4>
-            <ul className="space-y-2 text-sm text-[var(--color-text-muted)]">
-              <li>Site indépendant</li>
-              <li>Tests selon méthodologie RTINGS</li>
-              <li>Données mises à jour régulièrement</li>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/methodologie" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
+                  Méthodologie
+                </Link>
+              </li>
+              <li>
+                <Link href="/a-propos" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
+                  À propos
+                </Link>
+              </li>
+              <li className="text-[var(--color-text-muted)]">Données mises à jour régulièrement</li>
             </ul>
           </div>
         </div>
