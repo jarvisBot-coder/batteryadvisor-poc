@@ -55,7 +55,7 @@ export default function StickyBuyBox({ battery }: { battery: Battery }) {
       </div>
 
       {battery.shops && battery.shops.length > 0 && (
-        <AffiliateShops shops={battery.shops} productName={battery.name} />
+        <AffiliateShops shops={battery.shops} productName={battery.name} capacityKwh={battery.capacityKwh} />
       )}
     </div>
   );

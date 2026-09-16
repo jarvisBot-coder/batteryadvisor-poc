@@ -86,6 +86,10 @@ function transformBattery(raw: any): Battery {
     faq: raw.faq,
     competitors: raw.competitors,
     shops: raw.shops,
+    configurations: raw.configurations,
+    videoUrl: raw.video_url,
+    reviews: raw.reviews,
+    testSetup: raw.test_setup,
     readingTimeMin: raw.reading_time_min,
     // Extended specs
     depthOfDischarge: raw.depth_of_discharge,

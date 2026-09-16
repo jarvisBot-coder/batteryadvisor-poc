@@ -218,6 +218,19 @@
         "both"
       ],
       "default": "mono"
+    },
+    "configurations": {
+      "type": "json"
+    },
+    "video_url": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "reviews": {
+      "type": "json"
+    },
+    "test_setup": {
+      "type": "json"
     }
   }
 }

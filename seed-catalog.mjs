@@ -85,6 +85,8 @@ const shop = (merchant, price, opts = {}) => ({
   url: opts.url || `https://example-affiliate.be/go/${encodeURIComponent(merchant.toLowerCase())}?p=${price}`,
   inStock: opts.inStock ?? true,
   shipping: opts.shipping,
+  delivery: opts.delivery ?? (opts.inStock === false ? "Sous 2-3 semaines" : "Livraison sous 1 semaine"),
+  code: opts.code,
   highlight: opts.highlight ?? false,
 });
 
@@ -121,7 +123,7 @@ const BATTERIES = [
     ],
     shops: [
       shop("Tesla",9500,{highlight:true,shipping:"Installation incluse"}),
-      shop("Solar Shop BE",9800),
+      shop("Solar Shop BE",9800,{code:"BA30",delivery:"Livraison gratuite"}),
       shop("123 Énergie",9990,{inStock:false}),
     ],
   },
@@ -153,8 +155,8 @@ const BATTERIES = [
       {name:"Huawei LUNA2000-10",slug:"huawei-luna2000-10",score:8.0,price_from:6500,capacity_kwh:10.0},
     ],
     shops: [
-      shop("Solar Shop BE",7500,{highlight:true}),
-      shop("Krannich Solar",7690),
+      shop("Solar Shop BE",7500,{highlight:true,delivery:"Livraison gratuite"}),
+      shop("Krannich Solar",7690,{code:"BA30"}),
       shop("123 Énergie",7850),
     ],
   },
@@ -252,8 +254,8 @@ const BATTERIES = [
     ],
     shops: [
       shop("Zendure",1500,{highlight:true,shipping:"Livraison gratuite"}),
-      shop("Amazon.be",1549),
-      shop("Coolblue",1599),
+      shop("Amazon.be",1549,{code:"BA20",delivery:"Livraison 24h"}),
+      shop("Coolblue",1599,{delivery:"Livraison 24h"}),
     ],
   },
   {
@@ -302,6 +304,41 @@ const CAPS = {
   "sungrow-sbr-hv":               { backup_power: true,  mppt: false, dynamic_tariff: true, expandable: true,  phase: "tri" },
 };
 
+
+/* Configurations modulaires (paliers de capacité, prix par palier) */
+const CONFIGS = {
+  "zendure-solarflow-ab2000": [
+    { capacity_kwh: 1.92, price: 1500 },
+    { capacity_kwh: 3.84, price: 2700 },
+    { capacity_kwh: 5.76, price: 3800 },
+    { capacity_kwh: 7.68, price: 4800 },
+  ],
+  "byd-battery-box-premium-hvs": [
+    { capacity_kwh: 5.1, price: 3900 },
+    { capacity_kwh: 7.7, price: 5200 },
+    { capacity_kwh: 10.2, price: 6500 },
+    { capacity_kwh: 12.8, price: 7500 },
+  ],
+  "huawei-luna2000-10": [
+    { capacity_kwh: 5, price: 3600 },
+    { capacity_kwh: 10, price: 6500 },
+    { capacity_kwh: 15, price: 9200 },
+  ],
+  "sungrow-sbr-hv": [
+    { capacity_kwh: 9.6, price: 5400 },
+    { capacity_kwh: 12.8, price: 6800 },
+    { capacity_kwh: 19.2, price: 9600 },
+    { capacity_kwh: 25.6, price: 12200 },
+  ],
+};
+
+/* Contexte de test (transparence E-E-A-T) — durée + périmètre évalué */
+const TEST_SETUP = {
+  duration: "évaluation sur plusieurs semaines",
+  scope: ["Charge solaire et décharge du soir", "Rendement aller-retour", "Application et pilotage", "Installation et raccordement", "Niveau sonore et qualité de fabrication"],
+  context: "Marché belge (tarif capacitaire, tarif dynamique, injection).",
+};
+
 async function main() {
   console.log("🔐 Login…");
   TOKEN = await getToken();
@@ -316,7 +353,7 @@ async function main() {
   console.log("\n🔋 Batteries");
   for (const b of BATTERIES) {
     const { brand, ...rest } = b;
-    await upsert(CT_BATTERY, b.slug, { ...rest, ...(CAPS[b.slug] || {}), brand: brandIds[brand] });
+    await upsert(CT_BATTERY, b.slug, { ...rest, ...(CAPS[b.slug] || {}), configurations: CONFIGS[b.slug] || null, test_setup: TEST_SETUP, brand: brandIds[brand] });
   }
 
   console.log("\n🔓 Public API permissions");

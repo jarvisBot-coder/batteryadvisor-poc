@@ -18,6 +18,10 @@ import CapabilityBadges, { pricePerKwh } from "@/components/CapabilityBadges";
 import AuthorBox from "@/components/AuthorBox";
 import StickyBuyBox from "@/components/StickyBuyBox";
 import BatteryCard from "@/components/BatteryCard";
+import TestProtocol from "@/components/TestProtocol";
+import ConfigTable from "@/components/ConfigTable";
+import VideoEmbed from "@/components/VideoEmbed";
+import ReviewsSection from "@/components/ReviewsSection";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -140,9 +144,11 @@ export default async function BatteryDetailPage({ params }: { params: Promise<{ 
     ...(reviewSections.length ? [{ id: "analyse", label: "Analyse" }] : []),
     ...(battery.pros ? [{ id: "avantages", label: "Points forts" }] : []),
     { id: "specs", label: "Fiche technique" },
+    ...(battery.configurations?.length ? [{ id: "config", label: "Configurations" }] : []),
     ...(battery.competitors?.length ? [{ id: "comparatif", label: "Comparatif" }] : []),
     ...(battery.faq?.length ? [{ id: "faq", label: "FAQ" }] : []),
     { id: "verdict", label: "Verdict" },
+    { id: "avis", label: "Avis" },
   ];
 
   const verdictLead = battery.verdict?.split(/(?<=[.!?])\s/)[0];
@@ -185,6 +191,8 @@ export default async function BatteryDetailPage({ params }: { params: Promise<{ 
 
           {battery.quickTake && <div className="mt-6"><QuickTake text={battery.quickTake} /></div>}
 
+          {battery.videoUrl && <div className="mt-6"><VideoEmbed url={battery.videoUrl} title={fullName(battery)} /></div>}
+
           {/* Section nav */}
           <div className="sticky top-0 z-10 mt-8 bg-[var(--color-ground)]/90 backdrop-blur">
             <SectionNav sections={nav} />
@@ -201,6 +209,8 @@ export default async function BatteryDetailPage({ params }: { params: Promise<{ 
                 {battery.scoreDesign != null && <ScoreBar label="Design" score={battery.scoreDesign} />}
               </div>
             </ReviewSection>
+
+            <TestProtocol setup={battery.testSetup} />
 
             {reviewSections.map((sec, i) => (
               <ReviewSection key={sec.title + i} id={i === 0 ? "analyse" : `analyse-${i}`} icon={SECTION_ICONS[i % SECTION_ICONS.length]} title={sec.title}>
@@ -220,6 +230,14 @@ export default async function BatteryDetailPage({ params }: { params: Promise<{ 
               <SpecsTable specs={fullSpecs(battery)} />
             </section>
 
+            {battery.configurations && battery.configurations.length > 0 && (
+              <section id="config" className="scroll-mt-20 border-b border-[var(--color-border)] px-4 py-7 sm:px-6">
+                <h2 className="mb-1 font-display text-lg font-bold">Configurations &amp; extensions</h2>
+                <p className="mb-4 text-sm text-[var(--color-text-mid)]">Prix indicatifs par palier de capacité — le coût au kWh baisse quand on étend.</p>
+                <ConfigTable configs={battery.configurations} />
+              </section>
+            )}
+
             {battery.competitors && battery.competitors.length > 0 && (
               <section id="comparatif" className="scroll-mt-20 border-b border-[var(--color-border)]">
                 <ComparisonTable currentName={fullName(battery)} currentCapacity={`${battery.capacityKwh} kWh`} currentPower={`${battery.powerKw} kW`} currentPrice={battery.priceEur} currentScore={battery.scoreOverall} competitors={battery.competitors} />
@@ -237,6 +255,11 @@ export default async function BatteryDetailPage({ params }: { params: Promise<{ 
             </div>
           </article>
         </main>
+      </div>
+
+      {/* User reviews */}
+      <div id="avis" className="scroll-mt-20">
+        <ReviewsSection reviews={battery.reviews} />
       </div>
 
       {/* Related batteries */}

@@ -49,7 +49,30 @@ export interface Shop {
   logo?: string;
   inStock?: boolean;
   shipping?: string;
+  delivery?: string;
+  code?: string;
   highlight?: boolean;
+}
+
+/** Modular capacity configuration (stored in `configurations`). */
+export interface Configuration {
+  capacity_kwh: number;
+  price: number;
+}
+
+/** User review (stored in `reviews`). */
+export interface UserReview {
+  author?: string;
+  rating?: number;
+  date?: string;
+  text: string;
+}
+
+/** Test setup (stored in `test_setup`). */
+export interface TestSetup {
+  duration?: string;
+  scope?: string[];
+  context?: string;
 }
 
 /** FAQ entry (stored in the `faq` JSON field). */
@@ -100,6 +123,10 @@ export interface Battery {
   faq?: FaqItem[];
   competitors?: Competitor[];
   shops?: Shop[];
+  configurations?: Configuration[];
+  videoUrl?: string;
+  reviews?: UserReview[];
+  testSetup?: TestSetup;
   readingTimeMin?: number;
   /* Extended specs */
   depthOfDischarge?: number;
