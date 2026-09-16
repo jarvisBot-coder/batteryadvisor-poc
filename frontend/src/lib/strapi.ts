@@ -108,6 +108,25 @@ function transformBattery(raw: any): Battery {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function transformArticle(raw: any): Article {
+  return {
+    id: raw.id,
+    documentId: raw.documentId,
+    title: raw.title,
+    slug: raw.slug,
+    excerpt: raw.excerpt,
+    content: raw.body,
+    readTimeMin: raw.read_time_min,
+    badgeLabel: raw.badge_label,
+    image: raw.cover,
+    category: raw.category,
+    createdAt: raw.createdAt ?? "",
+    updatedAt: raw.updatedAt ?? "",
+    publishedAt: raw.publishedAt ?? "",
+  };
+}
+
 /* ── Batteries ── */
 
 export async function getBatteries() {
@@ -147,21 +166,24 @@ export async function getBrands() {
 /* ── Articles ── */
 
 export async function getArticles() {
-  return strapiFetch<StrapiListResponse<Article>>("/articles", {
-    "populate[image]": "true",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const res = await strapiFetch<StrapiListResponse<any>>("/articles", {
+    "populate[cover]": "true",
     "populate[category]": "true",
     "sort[0]": "publishedAt:desc",
     "pagination[pageSize]": "25",
   });
+  return { data: res.data.map(transformArticle), meta: res.meta };
 }
 
 export async function getArticle(slug: string) {
-  const res = await strapiFetch<StrapiListResponse<Article>>("/articles", {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const res = await strapiFetch<StrapiListResponse<any>>("/articles", {
     "filters[slug][$eq]": slug,
-    "populate[image]": "true",
+    "populate[cover]": "true",
     "populate[category]": "true",
   });
-  return res.data[0] ?? null;
+  return res.data[0] ? transformArticle(res.data[0]) : null;
 }
 
 /* ── Methodology ── */

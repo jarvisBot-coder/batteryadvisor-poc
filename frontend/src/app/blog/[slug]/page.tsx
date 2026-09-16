@@ -1,45 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Article } from "@/lib/types";
+import { getArticle } from "@/lib/strapi";
+import { mockArticles } from "@/lib/mock-articles";
 
-const mockArticle = {
-  title: "Batteries domestiques en 2025 : le guide complet pour la Belgique",
-  slug: "guide-batteries-domestiques-belgique-2025",
-  category: { name: "Guides", slug: "guides" },
-  publishedAt: "2025-01-15",
-  content: `
-## Pourquoi investir dans une batterie domestique ?
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
-Avec l'essor des panneaux solaires et l'évolution des tarifs d'électricité en Belgique, la batterie domestique devient un investissement de plus en plus pertinent. En 2025, plusieurs facteurs renforcent cette tendance :
-
-- **Tarif capacitaire en Flandre** : depuis janvier 2023, le tarif capacitaire pénalise les pics de consommation. Une batterie permet de les lisser.
-- **Tarifs dynamiques** : les contrats à prix variable (Belpex) permettent de charger quand l'électricité est bon marché.
-- **Autoconsommation** : stocker l'énergie solaire produite en journée pour la consommer le soir augmente significativement la rentabilité de vos panneaux.
-
-## Quel budget prévoir ?
-
-En Belgique, le prix d'une batterie domestique varie entre **4 000 € et 12 000 €** selon la capacité et la marque. Le coût moyen par kWh installé se situe autour de **600 à 900 €/kWh**.
-
-### Primes disponibles
-
-- **Flandre** : pas de prime spécifique pour les batteries en 2025
-- **Wallonie** : prime de 0 à 1 750 € selon les revenus (vérifiez les conditions actuelles)
-- **Bruxelles** : consultez Bruxelles Environnement pour les aides en vigueur
-
-## Comment choisir sa batterie ?
-
-Les critères essentiels à considérer :
-
-1. **Capacité (kWh)** : adaptée à votre consommation nocturne. Généralement 5 à 15 kWh pour un ménage belge.
-2. **Puissance (kW)** : détermine la vitesse de charge/décharge. Minimum 3 kW recommandé.
-3. **Chimie** : LFP (plus sûr, plus durable) vs NMC (plus compact).
-4. **Garantie** : minimum 10 ans / 6 000 cycles.
-5. **Compatibilité** : avec votre onduleur et vos panneaux existants.
-
-## Notre recommandation
-
-Consultez nos [comparatifs détaillés](/batteries) pour trouver la batterie adaptée à votre situation. Chaque modèle est évalué selon notre méthodologie indépendante inspirée de RTINGS.
-  `.trim(),
-};
+async function loadArticle(slug: string): Promise<Article | null> {
+  try {
+    const a = await getArticle(slug);
+    if (a) return a;
+  } catch {
+    /* fallback */
+  }
+  return mockArticles.find((a) => a.slug === slug) ?? null;
+}
 
 export async function generateMetadata({
   params,
@@ -47,10 +23,44 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const article = await loadArticle(slug);
+  if (!article) return { title: "Article introuvable" };
+  const description = article.excerpt ?? article.content?.slice(0, 160) ?? "";
   return {
-    title: mockArticle.title,
-    description: mockArticle.content.slice(0, 160),
+    title: article.title,
+    description,
+    alternates: { canonical: `${SITE_URL}/blog/${article.slug}` },
+    openGraph: { title: article.title, description, type: "article" },
   };
+}
+
+/* Lightweight markdown renderer for article bodies. */
+function ArticleBody({ markdown }: { markdown: string }) {
+  const blocks = markdown.split(/\n\n+/);
+  return (
+    <>
+      {blocks.map((block, i) => {
+        const b = block.trim();
+        if (b.startsWith("## "))
+          return <h2 key={i} className="mt-10 font-display text-2xl font-bold first:mt-0">{b.slice(3)}</h2>;
+        if (b.startsWith("### "))
+          return <h3 key={i} className="mt-8 font-display text-xl font-semibold">{b.slice(4)}</h3>;
+        if (/^(-|\d+\.)\s/.test(b)) {
+          const isOrdered = /^\d+\.\s/.test(b);
+          const items = b.split("\n");
+          const Tag = isOrdered ? "ol" : "ul";
+          return (
+            <Tag key={i} className={`mt-4 space-y-2 pl-6 text-[var(--color-text-mid)] ${isOrdered ? "list-decimal" : "list-disc"}`}>
+              {items.map((item, j) => (
+                <li key={j}>{item.replace(/^(-|\d+\.)\s?/, "")}</li>
+              ))}
+            </Tag>
+          );
+        }
+        return <p key={i} className="mt-4 leading-relaxed text-[var(--color-text-mid)]">{b}</p>;
+      })}
+    </>
+  );
 }
 
 export default async function ArticleDetailPage({
@@ -59,83 +69,71 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = mockArticle;
+  const article = await loadArticle(slug);
+  if (!article) notFound();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    datePublished: article.publishedAt || undefined,
+    dateModified: article.updatedAt || undefined,
+    author: { "@type": "Organization", name: "BatteryAdvisor.be" },
+    publisher: { "@type": "Organization", name: "BatteryAdvisor.be" },
+  };
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      {/* Breadcrumb */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <nav className="mb-6 text-sm text-[var(--color-text-muted)]">
-        <Link href="/blog" className="hover:text-[var(--color-primary)]">
-          Blog
-        </Link>
-        <span className="mx-2">›</span>
-        <span className="text-[var(--color-text-mid)]">
-          {article.category.name}
-        </span>
+        <Link href="/blog" className="hover:text-[var(--color-primary)]">Blog</Link>
+        {article.category && (
+          <>
+            <span className="mx-2">›</span>
+            <span className="text-[var(--color-text-mid)]">{article.category.name}</span>
+          </>
+        )}
       </nav>
 
       <header>
-        <span className="text-sm font-medium uppercase tracking-wider text-[var(--color-primary)]">
-          {article.category.name}
-        </span>
+        {article.category && (
+          <span className="text-sm font-medium uppercase tracking-wider text-[var(--color-primary)]">
+            {article.category.name}
+          </span>
+        )}
         <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl">
           {article.title}
         </h1>
-        <time className="mt-3 block text-sm text-[var(--color-text-muted)]">
-          {new Date(article.publishedAt).toLocaleDateString("fr-BE", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
+        <div className="mt-3 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+          {article.publishedAt && (
+            <time>
+              {new Date(article.publishedAt).toLocaleDateString("fr-BE", { year: "numeric", month: "long", day: "numeric" })}
+            </time>
+          )}
+          {article.readTimeMin ? <span>· {article.readTimeMin} min de lecture</span> : null}
+        </div>
       </header>
 
-      {/* Article body */}
-      <div className="prose mt-10 max-w-none">
-        {article.content.split("\n\n").map((block, i) => {
-          if (block.startsWith("## ")) {
-            return (
-              <h2
-                key={i}
-                className="mt-10 font-display text-2xl font-bold first:mt-0"
-              >
-                {block.replace("## ", "")}
-              </h2>
-            );
-          }
-          if (block.startsWith("### ")) {
-            return (
-              <h3
-                key={i}
-                className="mt-8 font-display text-xl font-semibold"
-              >
-                {block.replace("### ", "")}
-              </h3>
-            );
-          }
-          if (block.startsWith("- ") || block.startsWith("1. ")) {
-            const items = block.split("\n");
-            const isOrdered = block.startsWith("1.");
-            const Tag = isOrdered ? "ol" : "ul";
-            return (
-              <Tag
-                key={i}
-                className={`mt-4 space-y-2 text-[var(--color-text-mid)] ${
-                  isOrdered ? "list-decimal" : "list-disc"
-                } pl-6`}
-              >
-                {items.map((item, j) => (
-                  <li key={j}>{item.replace(/^[-\d]+\.\s?/, "")}</li>
-                ))}
-              </Tag>
-            );
-          }
-          return (
-            <p key={i} className="mt-4 leading-relaxed text-[var(--color-text-mid)]">
-              {block}
-            </p>
-          );
-        })}
+      <div className="mt-10 max-w-none">
+        {article.content ? <ArticleBody markdown={article.content} /> : (
+          <p className="text-[var(--color-text-mid)]">Contenu à venir.</p>
+        )}
+      </div>
+
+      <div className="mt-12 rounded-xl border border-[var(--color-primary)] bg-[var(--color-primary)]/5 p-6 text-center">
+        <p className="font-display text-lg font-semibold">Prêt à choisir votre batterie ?</p>
+        <p className="mt-1 text-sm text-[var(--color-text-mid)]">
+          Comparez les modèles ou laissez notre guide vous recommander la meilleure option.
+        </p>
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <Link href="/batteries" className="pill bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90">
+            Voir les batteries
+          </Link>
+          <Link href="/guide" className="pill border border-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white">
+            Trouver ma batterie
+          </Link>
+        </div>
       </div>
     </article>
   );

@@ -134,6 +134,8 @@ export interface Article {
   slug: string;
   excerpt?: string;
   content?: string;
+  readTimeMin?: number;
+  badgeLabel?: string;
   image?: StrapiMedia;
   category?: Category;
   createdAt: string;
