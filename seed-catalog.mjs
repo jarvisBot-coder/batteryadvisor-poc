@@ -291,6 +291,17 @@ const BATTERIES = [
   },
 ];
 
+
+/* Per-battery capabilities (badges + filters) */
+const CAPS = {
+  "tesla-powerwall-3":            { backup_power: true,  mppt: true,  dynamic_tariff: true, expandable: true,  phase: "both" },
+  "byd-battery-box-premium-hvs":  { backup_power: true,  mppt: false, dynamic_tariff: true, expandable: true,  phase: "both" },
+  "huawei-luna2000-10":           { backup_power: true,  mppt: false, dynamic_tariff: true, expandable: true,  phase: "both" },
+  "enphase-iq-battery-5p":        { backup_power: true,  mppt: false, dynamic_tariff: true, expandable: true,  phase: "both" },
+  "zendure-solarflow-ab2000":     { backup_power: false, mppt: true,  dynamic_tariff: true, expandable: true,  phase: "mono" },
+  "sungrow-sbr-hv":               { backup_power: true,  mppt: false, dynamic_tariff: true, expandable: true,  phase: "tri" },
+};
+
 async function main() {
   console.log("🔐 Login…");
   TOKEN = await getToken();
@@ -305,7 +316,7 @@ async function main() {
   console.log("\n🔋 Batteries");
   for (const b of BATTERIES) {
     const { brand, ...rest } = b;
-    await upsert(CT_BATTERY, b.slug, { ...rest, brand: brandIds[brand] });
+    await upsert(CT_BATTERY, b.slug, { ...rest, ...(CAPS[b.slug] || {}), brand: brandIds[brand] });
   }
 
   console.log("\n🔓 Public API permissions");

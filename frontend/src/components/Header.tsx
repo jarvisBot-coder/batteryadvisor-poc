@@ -4,7 +4,7 @@ import ThemeToggle from "./ThemeToggle";
 const navItems = [
   { href: "/batteries", label: "Batteries" },
   { href: "/comparateur", label: "Comparateur" },
-  { href: "/guide", label: "Guide" },
+  { href: "/outils", label: "Outils" },
   { href: "/blog", label: "Blog" },
 ];
 

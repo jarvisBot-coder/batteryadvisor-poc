@@ -97,6 +97,17 @@ function transformBattery(raw: any): Battery {
     inverterType: raw.inverter_type,
     peakPowerWatts: raw.peak_power_watts,
     cycles: raw.cycles,
+    backupPower: raw.backup_power ?? false,
+    mppt: raw.mppt ?? false,
+    dynamicTariff: raw.dynamic_tariff ?? false,
+    expandable: raw.expandable ?? false,
+    phase: raw.phase,
+    belgiumApproved: raw.belgium_approved ?? false,
+    pricePerKwh:
+      raw.price_from && raw.capacity_kwh
+        ? Math.round(raw.price_from / raw.capacity_kwh)
+        : undefined,
+    shopCount: Array.isArray(raw.shops) ? raw.shops.length : undefined,
     // Media
     image: raw.image,
     gallery: raw.gallery,

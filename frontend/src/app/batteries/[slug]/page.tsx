@@ -18,6 +18,7 @@ import SpecHighlight from "@/components/SpecHighlight";
 import SpecsTable from "@/components/SpecsTable";
 import VerdictBox from "@/components/VerdictBox";
 import BatteryImage from "@/components/BatteryImage";
+import CapabilityBadges, { pricePerKwh } from "@/components/CapabilityBadges";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -123,6 +124,7 @@ function fullSpecs(b: Battery) {
     b.inverterType ? { label: "Onduleur", value: b.inverterType } : null,
     b.connectivity ? { label: "Connectivité", value: b.connectivity } : null,
     { label: "Prix indicatif", value: b.priceEur ? `${b.priceEur.toLocaleString("fr-BE")} €` : "—" },
+    pricePerKwh(b) ? { label: "Prix / kWh", value: `${pricePerKwh(b)!.toLocaleString("fr-BE")} €` } : null,
   ].filter(Boolean) as { label: string; value: string }[];
 }
 
@@ -222,6 +224,9 @@ export default async function BatteryDetailPage({
           <div className="shrink-0">
             <ScoreCircle score={battery.scoreOverall} size={92} label="Score global" />
           </div>
+        </div>
+        <div className="mt-4">
+          <CapabilityBadges battery={battery} size="md" />
         </div>
       </header>
 

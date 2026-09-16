@@ -4,17 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Battery } from "@/lib/types";
 import ScoreCircle from "@/components/ScoreCircle";
+import { pricePerKwh } from "@/components/CapabilityBadges";
 
 interface Props {
   batteries: Battery[];
+  initialSlugs?: string[];
 }
 
 const MAX_COMPARE = 3;
 
-export default function ComparateurClient({ batteries }: Props) {
-  const [selected, setSelected] = useState<number[]>(() =>
-    batteries.slice(0, 2).map((b) => b.id),
-  );
+export default function ComparateurClient({ batteries, initialSlugs = [] }: Props) {
+  const [selected, setSelected] = useState<number[]>(() => {
+    const fromUrl = batteries.filter((b) => initialSlugs.includes(b.slug)).map((b) => b.id);
+    return fromUrl.length ? fromUrl.slice(0, MAX_COMPARE) : batteries.slice(0, 2).map((b) => b.id);
+  });
 
   function toggle(id: number) {
     setSelected((prev) =>
@@ -41,6 +44,8 @@ export default function ComparateurClient({ batteries }: Props) {
     { label: "Garantie", render: (b) => `${b.cycleWarrantyYears} ans`, value: (b) => b.cycleWarrantyYears, best: "max" },
     { label: "Cycles", render: (b) => (b.cycles ? b.cycles.toLocaleString("fr-BE") : "—"), value: (b) => b.cycles ?? 0, best: "max" },
     { label: "Prix", render: (b) => (b.priceEur ? `${b.priceEur.toLocaleString("fr-BE")} €` : "—"), value: (b) => b.priceEur ?? Infinity, best: "min" },
+    { label: "Prix / kWh", render: (b) => { const p = pricePerKwh(b); return p ? `${p} €` : "—"; }, value: (b) => pricePerKwh(b) ?? Infinity, best: "min" },
+    { label: "Rendement", render: (b) => (b.efficiencyPct ? `${b.efficiencyPct}%` : "—"), value: (b) => b.efficiencyPct ?? 0, best: "max" },
   ];
   const scoreRows: { label: string; key: keyof Battery }[] = [
     { label: "Performance", key: "scorePerformance" },
@@ -140,6 +145,23 @@ export default function ComparateurClient({ batteries }: Props) {
                   </tr>
                 );
               })}
+              {/* Capability rows */}
+              {([
+                ["Backup / secours", "backupPower"],
+                ["Entrée solaire (MPPT)", "mppt"],
+                ["Tarif dynamique", "dynamicTariff"],
+                ["Extensible", "expandable"],
+                ["Approuvé Belgique", "belgiumApproved"],
+              ] as const).map(([label, key]) => (
+                <tr key={label}>
+                  <td className="p-4 font-medium text-[var(--color-text-mid)]">{label}</td>
+                  {compared.map((b) => (
+                    <td key={b.id} className="p-4 text-center">
+                      {b[key] ? <span className="text-[var(--color-primary)]">✓</span> : "—"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
               {/* CTA row */}
               <tr>
                 <td className="p-4" />

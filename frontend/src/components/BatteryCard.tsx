@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Battery } from "@/lib/types";
 import ScoreCircle from "./ScoreCircle";
 import BatteryImage from "./BatteryImage";
+import CapabilityBadges, { pricePerKwh } from "./CapabilityBadges";
+import CompareToggle from "./CompareToggle";
 
 interface BatteryCardProps {
   battery: Battery;
@@ -15,15 +17,16 @@ const BADGE_LABEL: Record<string, string> = {
 
 export default function BatteryCard({ battery }: BatteryCardProps) {
   const badge = battery.badge && battery.badge !== "none" ? BADGE_LABEL[battery.badge] : null;
+  const ppk = pricePerKwh(battery);
 
   return (
     <Link
       href={`/batteries/${battery.slug}`}
       className="card group flex flex-col overflow-hidden transition-shadow hover:shadow-lg"
     >
-      {/* Image placeholder */}
       <div className="relative h-48">
         <BatteryImage battery={battery} />
+        <CompareToggle battery={battery} />
         {badge && (
           <span className="absolute left-3 top-3 rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold text-white">
             {badge}
@@ -32,7 +35,6 @@ export default function BatteryCard({ battery }: BatteryCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        {/* Brand + name */}
         <div>
           {battery.brand && (
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--color-primary)]">
@@ -51,15 +53,25 @@ export default function BatteryCard({ battery }: BatteryCardProps) {
           <span className="pill bg-[var(--color-ground)] px-2.5 py-1">{battery.chemistry}</span>
         </div>
 
+        {/* Capability badges */}
+        <CapabilityBadges battery={battery} />
+
         {/* Score + price row */}
         <div className="mt-auto flex items-end justify-between pt-3">
           <ScoreCircle score={battery.scoreOverall} size={52} />
           {battery.priceEur && (
             <div className="text-right">
-              <div className="text-[11px] text-[var(--color-text-muted)]">dès</div>
+              <div className="text-[11px] text-[var(--color-text-muted)]">
+                dès{battery.shopCount ? ` · ${battery.shopCount} offre${battery.shopCount > 1 ? "s" : ""}` : ""}
+              </div>
               <span className="text-lg font-bold text-[var(--color-text)]">
                 {battery.priceEur.toLocaleString("fr-BE")}&nbsp;€
               </span>
+              {ppk && (
+                <div className="text-[11px] text-[var(--color-text-muted)]">
+                  {ppk.toLocaleString("fr-BE")} €/kWh
+                </div>
+              )}
             </div>
           )}
         </div>

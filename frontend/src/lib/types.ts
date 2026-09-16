@@ -111,6 +111,16 @@ export interface Battery {
   inverterType?: string;
   peakPowerWatts?: number;
   cycles?: number;
+  /* Capabilities */
+  backupPower?: boolean;
+  mppt?: boolean;
+  dynamicTariff?: boolean;
+  expandable?: boolean;
+  phase?: string;
+  belgiumApproved?: boolean;
+  /* Computed */
+  pricePerKwh?: number;
+  shopCount?: number;
   /* Media */
   image?: StrapiMedia;
   gallery?: StrapiMedia[];

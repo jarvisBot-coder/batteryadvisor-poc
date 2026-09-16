@@ -20,8 +20,14 @@ async function loadBatteries(): Promise<Battery[]> {
   return mockBatteries;
 }
 
-export default async function ComparateurPage() {
+export default async function ComparateurPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ids?: string }>;
+}) {
   const batteries = await loadBatteries();
+  const { ids } = await searchParams;
+  const initialSlugs = ids ? ids.split(",").map((s) => decodeURIComponent(s.trim())) : [];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -31,7 +37,7 @@ export default async function ComparateurPage() {
       <p className="mt-2 text-[var(--color-text-mid)]">
         Sélectionnez jusqu&apos;à 3 batteries pour les comparer côte à côte.
       </p>
-      <ComparateurClient batteries={batteries} />
+      <ComparateurClient batteries={batteries} initialSlugs={initialSlugs} />
     </div>
   );
 }

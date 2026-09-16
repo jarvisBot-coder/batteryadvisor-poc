@@ -7,57 +7,217 @@
     "displayName": "Battery",
     "description": "Batteries domestiques plug-in pour le marché belge"
   },
-  "options": { "draftAndPublish": true },
+  "options": {
+    "draftAndPublish": true
+  },
   "pluginOptions": {},
   "attributes": {
-    "name": { "type": "string", "required": true, "maxLength": 255 },
-    "slug": { "type": "uid", "targetField": "name" },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
     "brand": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::brand.brand",
       "inversedBy": "batteries"
     },
-    "capacity_kwh": { "type": "decimal" },
-    "power_watts": { "type": "integer" },
-    "type": { "type": "enumeration", "enum": ["plug-in", "hybrid", "off-grid"], "default": "plug-in" },
-    "score_overall": { "type": "decimal", "min": 0, "max": 10 },
-    "score_performance": { "type": "decimal", "min": 0, "max": 10 },
-    "score_app": { "type": "decimal", "min": 0, "max": 10 },
-    "score_value": { "type": "decimal", "min": 0, "max": 10 },
-    "score_installation": { "type": "decimal", "min": 0, "max": 10 },
-    "score_quality": { "type": "decimal", "min": 0, "max": 10 },
-    "score_design": { "type": "decimal", "min": 0, "max": 10 },
-    "score_warranty": { "type": "decimal", "min": 0, "max": 10 },
-    "price_from": { "type": "decimal" },
-    "warranty_years": { "type": "integer" },
-    "weight_kg": { "type": "decimal" },
-    "chemistry": { "type": "string", "maxLength": 100 },
-    "cycles": { "type": "integer" },
-    "belgium_approved": { "type": "boolean", "default": false },
-    "badge": { "type": "enumeration", "enum": ["coup-de-coeur", "meilleure-puissance", "meilleur-budget", "none"], "default": "none" },
-    "pros": { "type": "json" },
-    "cons": { "type": "json" },
-    "verdict": { "type": "text" },
-    "review_body": { "type": "richtext" },
-    "quick_take": { "type": "text" },
-    "faq": { "type": "json" },
-    "competitors": { "type": "json" },
-    "ideal_for": { "type": "json" },
-    "not_for": { "type": "json" },
-    "alternative_pick": { "type": "string", "maxLength": 255 },
-    "depth_of_discharge": { "type": "decimal" },
-    "efficiency_pct": { "type": "decimal" },
-    "dimensions": { "type": "string", "maxLength": 100 },
-    "ip_rating": { "type": "string", "maxLength": 10 },
-    "connectivity": { "type": "string", "maxLength": 255 },
-    "inverter_type": { "type": "string", "maxLength": 100 },
-    "peak_power_watts": { "type": "integer" },
-    "reading_time_min": { "type": "integer" },
-    "image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
-    "gallery": { "type": "media", "multiple": true, "allowedTypes": ["images"] },
-    "shops": { "type": "json" },
-    "features": { "type": "json" },
-    "published_at_date": { "type": "date" }
+    "capacity_kwh": {
+      "type": "decimal"
+    },
+    "power_watts": {
+      "type": "integer"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "plug-in",
+        "hybrid",
+        "off-grid"
+      ],
+      "default": "plug-in"
+    },
+    "score_overall": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_performance": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_app": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_value": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_installation": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_quality": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_design": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "score_warranty": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "price_from": {
+      "type": "decimal"
+    },
+    "warranty_years": {
+      "type": "integer"
+    },
+    "weight_kg": {
+      "type": "decimal"
+    },
+    "chemistry": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "cycles": {
+      "type": "integer"
+    },
+    "belgium_approved": {
+      "type": "boolean",
+      "default": false
+    },
+    "badge": {
+      "type": "enumeration",
+      "enum": [
+        "coup-de-coeur",
+        "meilleure-puissance",
+        "meilleur-budget",
+        "none"
+      ],
+      "default": "none"
+    },
+    "pros": {
+      "type": "json"
+    },
+    "cons": {
+      "type": "json"
+    },
+    "verdict": {
+      "type": "text"
+    },
+    "review_body": {
+      "type": "richtext"
+    },
+    "quick_take": {
+      "type": "text"
+    },
+    "faq": {
+      "type": "json"
+    },
+    "competitors": {
+      "type": "json"
+    },
+    "ideal_for": {
+      "type": "json"
+    },
+    "not_for": {
+      "type": "json"
+    },
+    "alternative_pick": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "depth_of_discharge": {
+      "type": "decimal"
+    },
+    "efficiency_pct": {
+      "type": "decimal"
+    },
+    "dimensions": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "ip_rating": {
+      "type": "string",
+      "maxLength": 10
+    },
+    "connectivity": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "inverter_type": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "peak_power_watts": {
+      "type": "integer"
+    },
+    "reading_time_min": {
+      "type": "integer"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "shops": {
+      "type": "json"
+    },
+    "features": {
+      "type": "json"
+    },
+    "published_at_date": {
+      "type": "date"
+    },
+    "backup_power": {
+      "type": "boolean",
+      "default": false
+    },
+    "mppt": {
+      "type": "boolean",
+      "default": false
+    },
+    "dynamic_tariff": {
+      "type": "boolean",
+      "default": false
+    },
+    "expandable": {
+      "type": "boolean",
+      "default": false
+    },
+    "phase": {
+      "type": "enumeration",
+      "enum": [
+        "mono",
+        "tri",
+        "both"
+      ],
+      "default": "mono"
+    }
   }
 }
