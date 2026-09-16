@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/batteries`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/comparateur`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/toplistes`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_URL}/top`, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/outils`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/guide`, changeFrequency: "monthly", priority: 0.6 },
     ...TOPLISTS.map((t) => ({ url: `${SITE_URL}/toplistes/${t.slug}`, changeFrequency: "weekly" as const, priority: 0.7 })),
