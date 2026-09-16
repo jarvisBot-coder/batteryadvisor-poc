@@ -41,6 +41,35 @@ export interface StrapiMedia {
   formats?: Record<string, { url: string; width: number; height: number }>;
 }
 
+/** Affiliate merchant offer (stored in the `shops` JSON field). */
+export interface Shop {
+  merchant: string;
+  price?: number;
+  url: string;
+  logo?: string;
+  inStock?: boolean;
+  shipping?: string;
+  highlight?: boolean;
+}
+
+/** FAQ entry (stored in the `faq` JSON field). */
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/** Backwards-compat alias used by some components. */
+export type FAQItem = FaqItem;
+
+/** Competitor reference (stored in the `competitors` JSON field). */
+export interface Competitor {
+  name: string;
+  score?: number;
+  price_from?: number;
+  capacity_kwh?: number;
+  slug?: string;
+}
+
 export interface Battery {
   id: number;
   documentId: string;
@@ -57,10 +86,33 @@ export interface Battery {
   scorePerformance: number;
   scoreWarranty: number;
   scoreEaseOfUse: number;
+  scoreDesign?: number;
+  scoreApp?: number;
   pros?: string[];
   cons?: string[];
   verdict?: string;
+  reviewBody?: string;
+  quickTake?: string;
+  idealFor?: string[];
+  notFor?: string[];
+  alternativePick?: string;
+  faq?: FaqItem[];
+  competitors?: Competitor[];
+  shops?: Shop[];
+  readingTimeMin?: number;
+  /* Extended specs */
+  depthOfDischarge?: number;
+  efficiencyPct?: number;
+  dimensions?: string;
+  weightKg?: number;
+  ipRating?: string;
+  connectivity?: string;
+  inverterType?: string;
+  peakPowerWatts?: number;
+  cycles?: number;
+  /* Media */
   image?: StrapiMedia;
+  gallery?: StrapiMedia[];
   category?: Category;
   createdAt: string;
   updatedAt: string;

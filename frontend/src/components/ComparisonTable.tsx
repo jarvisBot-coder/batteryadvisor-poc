@@ -4,10 +4,13 @@ interface ComparisonTableProps {
   currentName: string;
   currentCapacity: string;
   currentPower: string;
-  currentPrice: number;
+  currentPrice?: number;
   currentScore: number;
   competitors: Competitor[];
 }
+
+const fmtPrice = (v?: number) =>
+  v != null ? `${v.toLocaleString("fr-BE")} €` : "—";
 
 export default function ComparisonTable({
   currentName,
@@ -33,9 +36,6 @@ export default function ComparisonTable({
                 Capacité
               </th>
               <th className="px-4 py-2.5 text-left font-semibold text-[var(--color-text-mid)]">
-                Puissance
-              </th>
-              <th className="px-4 py-2.5 text-left font-semibold text-[var(--color-text-mid)]">
                 Prix ≈
               </th>
               <th className="px-4 py-2.5 text-left font-semibold text-[var(--color-text-mid)]">
@@ -53,10 +53,7 @@ export default function ComparisonTable({
                 {currentCapacity}
               </td>
               <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                {currentPower}
-              </td>
-              <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                {currentPrice.toLocaleString("fr-BE")} €
+                {fmtPrice(currentPrice)}
               </td>
               <td className="px-4 py-2.5 font-bold text-[var(--color-text)]">
                 {currentScore}
@@ -66,23 +63,25 @@ export default function ComparisonTable({
             {competitors.map((c) => (
               <tr key={c.name}>
                 <td className="px-4 py-2.5 text-[var(--color-text)]">
-                  {c.name}
+                  {c.slug ? (
+                    <a
+                      href={`/batteries/${c.slug}`}
+                      className="hover:text-[var(--color-primary)]"
+                    >
+                      {c.name}
+                    </a>
+                  ) : (
+                    c.name
+                  )}
                 </td>
                 <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                  {typeof c.capacityKwh === "number"
-                    ? `${c.capacityKwh} kWh`
-                    : c.capacityKwh}
+                  {c.capacity_kwh != null ? `${c.capacity_kwh} kWh` : "—"}
                 </td>
                 <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                  {typeof c.powerKw === "number"
-                    ? `${c.powerKw} kW`
-                    : c.powerKw}
+                  {fmtPrice(c.price_from)}
                 </td>
                 <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                  {c.priceEur.toLocaleString("fr-BE")} €
-                </td>
-                <td className="px-4 py-2.5 text-[var(--color-text-mid)]">
-                  {c.score}
+                  {c.score != null ? Math.round(c.score * 10) : "—"}
                 </td>
               </tr>
             ))}

@@ -1,103 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { Battery } from "@/lib/types";
+import { getBatteries } from "@/lib/strapi";
+import { mockBatteries } from "@/lib/mock";
 import BatteryCard from "@/components/BatteryCard";
 import ScoreCircle from "@/components/ScoreCircle";
 
 export const metadata: Metadata = {
   title: "BatteryAdvisor.be — Comparatif batteries domestiques Belgique",
+  description:
+    "Comparatifs indépendants, scores détaillés et conseils pour choisir la batterie domestique adaptée à votre installation en Belgique.",
 };
 
-/* ── Mock data for development without Strapi ── */
-const mockBatteries: Battery[] = [
-  {
-    id: 1,
-    documentId: "1",
-    slug: "tesla-powerwall-3",
-    name: "Powerwall 3",
-    brand: { id: 1, documentId: "1", name: "Tesla", slug: "tesla" },
-    capacityKwh: 13.5,
-    powerKw: 11.5,
-    chemistry: "LFP",
-    cycleWarrantyYears: 10,
-    priceEur: 8900,
-    scoreOverall: 87,
-    scoreValue: 78,
-    scorePerformance: 92,
-    scoreWarranty: 85,
-    scoreEaseOfUse: 90,
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
-  },
-  {
-    id: 2,
-    documentId: "2",
-    slug: "byd-battbox-premium-hvs",
-    name: "BattBox Premium HVS",
-    brand: { id: 2, documentId: "2", name: "BYD", slug: "byd" },
-    capacityKwh: 10.2,
-    powerKw: 10.2,
-    chemistry: "LFP",
-    cycleWarrantyYears: 10,
-    priceEur: 6500,
-    scoreOverall: 84,
-    scoreValue: 88,
-    scorePerformance: 82,
-    scoreWarranty: 82,
-    scoreEaseOfUse: 78,
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
-  },
-  {
-    id: 3,
-    documentId: "3",
-    slug: "huawei-luna2000",
-    name: "LUNA2000-10-S0",
-    brand: { id: 3, documentId: "3", name: "Huawei", slug: "huawei" },
-    capacityKwh: 10,
-    powerKw: 5,
-    chemistry: "LFP",
-    cycleWarrantyYears: 10,
-    priceEur: 5200,
-    scoreOverall: 81,
-    scoreValue: 90,
-    scorePerformance: 75,
-    scoreWarranty: 80,
-    scoreEaseOfUse: 76,
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
-  },
-  {
-    id: 4,
-    documentId: "4",
-    slug: "enphase-iq-battery-5p",
-    name: "IQ Battery 5P",
-    brand: { id: 4, documentId: "4", name: "Enphase", slug: "enphase" },
-    capacityKwh: 5,
-    powerKw: 3.84,
-    chemistry: "LFP",
-    cycleWarrantyYears: 15,
-    priceEur: 5900,
-    scoreOverall: 79,
-    scoreValue: 72,
-    scorePerformance: 78,
-    scoreWarranty: 92,
-    scoreEaseOfUse: 85,
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
-  },
-];
-
-const stats = [
-  { value: "24+", label: "Batteries testées" },
-  { value: "8", label: "Marques comparées" },
-  { value: "5", label: "Critères de score" },
-  { value: "100%", label: "Indépendant" },
-];
+async function loadBatteries(): Promise<Battery[]> {
+  try {
+    const res = await getBatteries();
+    if (res.data.length) return res.data;
+  } catch {
+    // Strapi down — fall back to mock.
+  }
+  return mockBatteries;
+}
 
 const useCases = [
   {
@@ -120,7 +43,22 @@ const useCases = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const batteries = await loadBatteries();
+  const topPicks = batteries.slice(0, 4);
+  const brandCount = new Set(
+    batteries.map((b) => b.brand?.name).filter(Boolean),
+  ).size;
+
+  const stats = [
+    { value: `${batteries.length}`, label: "Batteries testées" },
+    { value: `${brandCount}`, label: "Marques comparées" },
+    { value: "5", label: "Critères de score" },
+    { value: "100%", label: "Indépendant" },
+  ];
+
+  const showcase = topPicks[0];
+
   return (
     <>
       {/* ── Hero ── */}
@@ -194,7 +132,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         <div className="flex items-end justify-between">
           <h2 className="font-display text-2xl font-bold sm:text-3xl">
-            Meilleures batteries 2025
+            Meilleures batteries
           </h2>
           <Link
             href="/batteries"
@@ -205,7 +143,7 @@ export default function HomePage() {
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {mockBatteries.map((b) => (
+          {topPicks.map((b) => (
             <BatteryCard key={b.id} battery={b} />
           ))}
         </div>
@@ -214,11 +152,13 @@ export default function HomePage() {
       {/* ── Methodology teaser ── */}
       <section className="border-t border-[var(--color-border)] bg-[var(--color-card)]">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-16 sm:flex-row sm:px-6">
-          <div className="flex gap-3">
-            <ScoreCircle score={87} size={72} label="Global" />
-            <ScoreCircle score={92} size={72} label="Perf." />
-            <ScoreCircle score={78} size={72} label="Valeur" />
-          </div>
+          {showcase && (
+            <div className="flex gap-3">
+              <ScoreCircle score={showcase.scoreOverall} size={72} label="Global" />
+              <ScoreCircle score={showcase.scorePerformance} size={72} label="Perf." />
+              <ScoreCircle score={showcase.scoreValue} size={72} label="Valeur" />
+            </div>
+          )}
           <div>
             <h2 className="font-display text-2xl font-bold">
               Méthodologie transparente

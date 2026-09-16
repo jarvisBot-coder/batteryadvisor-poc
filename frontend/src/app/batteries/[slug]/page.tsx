@@ -1,44 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { Battery } from "@/lib/types";
+import { getBattery } from "@/lib/strapi";
+import { mockBatteries } from "@/lib/mock";
 import ScoreCircle from "@/components/ScoreCircle";
 import ScoreBar from "@/components/ScoreBar";
 import ProConGrid from "@/components/ProConGrid";
+import AffiliateShops from "@/components/AffiliateShops";
+import FAQSection from "@/components/FAQSection";
+import ComparisonTable from "@/components/ComparisonTable";
 
-/* Mock lookup – replaced by getBattery(slug) */
-const mockBattery: Battery = {
-  id: 1,
-  documentId: "1",
-  slug: "tesla-powerwall-3",
-  name: "Powerwall 3",
-  brand: { id: 1, documentId: "1", name: "Tesla", slug: "tesla" },
-  capacityKwh: 13.5,
-  powerKw: 11.5,
-  chemistry: "LFP",
-  cycleWarrantyYears: 10,
-  priceEur: 8900,
-  scoreOverall: 87,
-  scoreValue: 78,
-  scorePerformance: 92,
-  scoreWarranty: 85,
-  scoreEaseOfUse: 90,
-  pros: [
-    "Puissance de sortie élevée (11.5 kW)",
-    "Grande capacité de 13.5 kWh",
-    "Onduleur intégré simplifie l'installation",
-    "Application mobile intuitive",
-  ],
-  cons: [
-    "Prix élevé par rapport à la concurrence",
-    "Disponibilité limitée en Belgique",
-    "Pas de modularité (capacité fixe)",
-  ],
-  verdict:
-    "Le Tesla Powerwall 3 reste une référence grâce à sa puissance et son intégration logicielle. Son prix élevé est compensé par des performances de premier plan et une garantie solide de 10 ans.",
-  createdAt: "",
-  updatedAt: "",
-  publishedAt: "",
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
+
+/** Fetch from Strapi, fall back to mock data when the backend is unreachable. */
+async function loadBattery(slug: string): Promise<Battery | null> {
+  try {
+    const b = await getBattery(slug);
+    if (b) return b;
+  } catch {
+    // Strapi down — fall through to mock.
+  }
+  return mockBatteries.find((b) => b.slug === slug) ?? null;
+}
 
 export async function generateMetadata({
   params,
@@ -46,19 +30,126 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const battery = await loadBattery(slug);
+  if (!battery) return { title: "Batterie introuvable" };
+
+  const title = `${battery.brand?.name ?? ""} ${battery.name} — Test & avis (${battery.scoreOverall}/100)`.trim();
+  const description =
+    battery.quickTake ??
+    `Test complet de la ${battery.brand?.name ?? ""} ${battery.name}. ${battery.capacityKwh} kWh, ${battery.chemistry}. Score ${battery.scoreOverall}/100.`;
+
   return {
-    title: `${mockBattery.name} – Avis et score`,
-    description: `Test complet de la ${mockBattery.brand?.name} ${mockBattery.name}. Score ${mockBattery.scoreOverall}/100. ${mockBattery.capacityKwh} kWh, ${mockBattery.chemistry}.`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/batteries/${battery.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `${SITE_URL}/batteries/${battery.slug}`,
+    },
   };
 }
 
-const specs = (b: Battery) => [
-  { label: "Capacité", value: `${b.capacityKwh} kWh` },
-  { label: "Puissance", value: `${b.powerKw} kW` },
-  { label: "Chimie", value: b.chemistry },
-  { label: "Garantie", value: `${b.cycleWarrantyYears} ans` },
-  { label: "Prix indicatif", value: b.priceEur ? `${b.priceEur.toLocaleString("fr-BE")} €` : "—" },
-];
+/* ── Minimal markdown renderer for the review body ── */
+function ReviewBody({ markdown }: { markdown: string }) {
+  const blocks = markdown.split(/\n\n+/);
+  return (
+    <div className="space-y-4">
+      {blocks.map((block, i) => {
+        const trimmed = block.trim();
+        if (trimmed.startsWith("### ")) {
+          return (
+            <h3 key={i} className="font-display text-lg font-semibold">
+              {trimmed.slice(4)}
+            </h3>
+          );
+        }
+        if (trimmed.startsWith("## ")) {
+          return (
+            <h2 key={i} className="font-display text-xl font-bold">
+              {trimmed.slice(3)}
+            </h2>
+          );
+        }
+        return (
+          <p key={i} className="leading-relaxed text-[var(--color-text-mid)]">
+            {trimmed}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+function specs(b: Battery) {
+  return [
+    { label: "Capacité", value: `${b.capacityKwh} kWh` },
+    { label: "Puissance", value: `${b.powerKw} kW` },
+    b.peakPowerWatts
+      ? { label: "Puissance de pointe", value: `${(b.peakPowerWatts / 1000).toFixed(1)} kW` }
+      : null,
+    { label: "Chimie", value: b.chemistry },
+    b.cycles ? { label: "Cycles", value: b.cycles.toLocaleString("fr-BE") } : null,
+    { label: "Garantie", value: `${b.cycleWarrantyYears} ans` },
+    b.efficiencyPct ? { label: "Rendement", value: `${b.efficiencyPct} %` } : null,
+    b.depthOfDischarge ? { label: "Profondeur de décharge", value: `${b.depthOfDischarge} %` } : null,
+    b.weightKg ? { label: "Poids", value: `${b.weightKg} kg` } : null,
+    b.dimensions ? { label: "Dimensions", value: b.dimensions } : null,
+    b.ipRating ? { label: "Indice de protection", value: b.ipRating } : null,
+    b.inverterType ? { label: "Onduleur", value: b.inverterType } : null,
+    b.connectivity ? { label: "Connectivité", value: b.connectivity } : null,
+    { label: "Prix indicatif", value: b.priceEur ? `${b.priceEur.toLocaleString("fr-BE")} €` : "—" },
+  ].filter(Boolean) as { label: string; value: string }[];
+}
+
+/* ── JSON-LD structured data (Product + Review + FAQ) ── */
+function buildJsonLd(b: Battery) {
+  const graph: Record<string, unknown>[] = [
+    {
+      "@type": "Product",
+      name: `${b.brand?.name ?? ""} ${b.name}`.trim(),
+      brand: b.brand?.name ? { "@type": "Brand", name: b.brand.name } : undefined,
+      category: "Batterie domestique",
+      offers: b.priceEur
+        ? {
+            "@type": "Offer",
+            price: b.priceEur,
+            priceCurrency: "EUR",
+            availability: "https://schema.org/InStock",
+          }
+        : undefined,
+      review: {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: (b.scoreOverall / 10).toFixed(1),
+          bestRating: "10",
+        },
+        author: { "@type": "Organization", name: "BatteryAdvisor.be" },
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: (b.scoreOverall / 10).toFixed(1),
+        bestRating: "10",
+        ratingCount: 1,
+      },
+    },
+  ];
+
+  if (b.faq && b.faq.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      mainEntity: b.faq.map((f) => ({
+        "@type": "Question",
+        name: f.question,
+        acceptedAnswer: { "@type": "Answer", text: f.answer },
+      })),
+    });
+  }
+
+  return { "@context": "https://schema.org", "@graph": graph };
+}
 
 export default async function BatteryDetailPage({
   params,
@@ -66,10 +157,18 @@ export default async function BatteryDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const battery = mockBattery;
+  const battery = await loadBattery(slug);
+  if (!battery) notFound();
+
+  const jsonLd = buildJsonLd(battery);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Breadcrumb */}
       <nav className="mb-6 text-sm text-[var(--color-text-muted)]">
         <Link href="/batteries" className="hover:text-[var(--color-primary)]">
@@ -92,17 +191,42 @@ export default async function BatteryDetailPage({
           <h1 className="font-display text-3xl font-bold sm:text-4xl">
             {battery.name}
           </h1>
+          {battery.readingTimeMin && (
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+              Lecture {battery.readingTimeMin} min
+            </p>
+          )}
         </div>
         <ScoreCircle score={battery.scoreOverall} size={88} label="Score global" />
       </div>
 
+      {/* Quick take */}
+      {battery.quickTake && (
+        <div className="card mt-8 border-l-4 border-l-[var(--color-primary)] p-6">
+          <p className="text-lg leading-relaxed">{battery.quickTake}</p>
+        </div>
+      )}
+
+      {/* Affiliate offers — the money box, placed high */}
+      {battery.shops && battery.shops.length > 0 && (
+        <div className="mt-6">
+          <AffiliateShops shops={battery.shops} productName={battery.name} />
+        </div>
+      )}
+
       {/* Score breakdown */}
-      <div className="card mt-8 space-y-4 p-6">
+      <div className="card mt-6 space-y-4 p-6">
         <h2 className="font-display text-lg font-semibold">Scores détaillés</h2>
         <ScoreBar label="Performance" score={battery.scorePerformance} />
         <ScoreBar label="Valeur" score={battery.scoreValue} />
         <ScoreBar label="Garantie" score={battery.scoreWarranty} />
-        <ScoreBar label="Facilité" score={battery.scoreEaseOfUse} />
+        <ScoreBar label="Installation" score={battery.scoreEaseOfUse} />
+        {battery.scoreApp != null && (
+          <ScoreBar label="Application" score={battery.scoreApp} />
+        )}
+        {battery.scoreDesign != null && (
+          <ScoreBar label="Design" score={battery.scoreDesign} />
+        )}
       </div>
 
       {/* Specs table */}
@@ -127,6 +251,37 @@ export default async function BatteryDetailPage({
         </div>
       )}
 
+      {/* Full review body */}
+      {battery.reviewBody && (
+        <div className="card mt-6 p-6">
+          <ReviewBody markdown={battery.reviewBody} />
+        </div>
+      )}
+
+      {/* Competitors comparison */}
+      {battery.competitors && battery.competitors.length > 0 && (
+        <div className="card mt-6 overflow-hidden">
+          <ComparisonTable
+            currentName={`${battery.brand?.name ?? ""} ${battery.name}`.trim()}
+            currentCapacity={`${battery.capacityKwh} kWh`}
+            currentPower={`${battery.powerKw} kW`}
+            currentPrice={battery.priceEur}
+            currentScore={battery.scoreOverall}
+            competitors={battery.competitors}
+          />
+        </div>
+      )}
+
+      {/* FAQ */}
+      {battery.faq && battery.faq.length > 0 && (
+        <div className="card mt-6 p-6">
+          <h2 className="mb-2 font-display text-lg font-semibold">
+            Questions fréquentes
+          </h2>
+          <FAQSection items={battery.faq} />
+        </div>
+      )}
+
       {/* Verdict */}
       {battery.verdict && (
         <div className="card mt-6 p-6">
@@ -134,6 +289,18 @@ export default async function BatteryDetailPage({
           <p className="mt-2 leading-relaxed text-[var(--color-text-mid)]">
             {battery.verdict}
           </p>
+          {battery.alternativePick && (
+            <p className="mt-3 text-sm text-[var(--color-text-muted)]">
+              Alternative à considérer : <strong>{battery.alternativePick}</strong>
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Secondary affiliate CTA */}
+      {battery.shops && battery.shops.length > 0 && (
+        <div className="mt-6">
+          <AffiliateShops shops={battery.shops} productName={battery.name} />
         </div>
       )}
     </div>
