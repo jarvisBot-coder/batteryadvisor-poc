@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Article } from "@/lib/types";
 import { getArticles } from "@/lib/strapi";
 import { mockArticles } from "@/lib/mock-articles";
+import { mediaUrl } from "@/lib/media";
 
 export const metadata: Metadata = {
   title: "Blog & Guides",
@@ -37,8 +38,13 @@ export default async function BlogPage() {
             href={`/blog/${article.slug}`}
             className="card group flex flex-col gap-3 p-6 transition-shadow hover:shadow-lg sm:flex-row sm:gap-6"
           >
-            <div className="flex h-32 w-full shrink-0 items-center justify-center rounded-lg bg-[var(--color-ground)] text-4xl sm:h-auto sm:w-40">
-              📝
+            <div className="h-32 w-full shrink-0 overflow-hidden rounded-lg bg-[var(--color-ground)] sm:h-auto sm:w-48">
+              {mediaUrl(article.image?.url) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={mediaUrl(article.image?.url)} alt={article.title} className="h-full w-full object-cover" loading="lazy" />
+              ) : (
+                <div className="grid h-full min-h-[8rem] place-items-center text-4xl text-[var(--color-text-muted)]">📝</div>
+              )}
             </div>
             <div className="flex flex-col">
               {article.category && (

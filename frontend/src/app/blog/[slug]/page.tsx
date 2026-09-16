@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Article } from "@/lib/types";
 import { getArticle } from "@/lib/strapi";
 import { mockArticles } from "@/lib/mock-articles";
+import { mediaUrl } from "@/lib/media";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -114,6 +115,16 @@ export default async function ArticleDetailPage({
           {article.readTimeMin ? <span>· {article.readTimeMin} min de lecture</span> : null}
         </div>
       </header>
+
+      {mediaUrl(article.image?.url) && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={mediaUrl(article.image?.url)}
+          alt={article.title}
+          className="mt-8 aspect-[1200/630] w-full rounded-xl object-cover"
+          loading="lazy"
+        />
+      )}
 
       <div className="mt-10 max-w-none">
         {article.content ? <ArticleBody markdown={article.content} /> : (

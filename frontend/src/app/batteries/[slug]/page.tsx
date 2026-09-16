@@ -17,6 +17,7 @@ import PullQuote from "@/components/PullQuote";
 import SpecHighlight from "@/components/SpecHighlight";
 import SpecsTable from "@/components/SpecsTable";
 import VerdictBox from "@/components/VerdictBox";
+import BatteryImage from "@/components/BatteryImage";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://batteryadvisor.be";
 
@@ -226,6 +227,11 @@ export default async function BatteryDetailPage({
 
       {/* Quick take */}
       {battery.quickTake && <QuickTake text={battery.quickTake} />}
+
+      {/* Product image band */}
+      <div className="mt-6 h-56 overflow-hidden rounded-xl sm:h-72">
+        <BatteryImage battery={battery} rounded />
+      </div>
 
       {/* Hero specs */}
       <div className="mt-6">
