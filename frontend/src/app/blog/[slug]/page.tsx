@@ -42,6 +42,19 @@ function ArticleBody({ markdown }: { markdown: string }) {
     <>
       {blocks.map((block, i) => {
         const b = block.trim();
+        if (b.startsWith("![")) {
+          const m = b.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+          if (m) {
+            const [, alt, src] = m;
+            return (
+              <figure key={i} className="my-8">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt={alt} className="w-full rounded-xl border border-[var(--color-border)]" loading="lazy" />
+                {alt && <figcaption className="mt-2 text-center text-xs text-[var(--color-text-muted)]">{alt}</figcaption>}
+              </figure>
+            );
+          }
+        }
         if (b.startsWith("## "))
           return <h2 key={i} className="mt-10 font-display text-2xl font-bold first:mt-0">{b.slice(3)}</h2>;
         if (b.startsWith("### "))

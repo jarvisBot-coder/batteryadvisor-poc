@@ -17,6 +17,8 @@ C'est le point clé à comprendre, car les deux codes sont souvent confondus.
 
 En résumé : **la C10/11 fixe les règles, la C10/26 est la liste de ce qui les respecte.**
 
+![C10/11 (les règles techniques) vs C10/26 (la liste du matériel homologué)](/images/synergrid-c1011-vs-c1026.png)
+
 ## Pourquoi la certification est-elle obligatoire ?
 
 Une batterie et son onduleur peuvent, en cas de dysfonctionnement, injecter de l'électricité sur le réseau à un moment inopportun — par exemple pendant une coupure, ce qui met en danger les techniciens qui interviennent sur la ligne. La certification garantit notamment que l'appareil se **découple automatiquement** du réseau quand il le faut, qu'il respecte les limites de tension et de fréquence, et qu'il n'introduit pas de perturbations.
@@ -65,6 +67,8 @@ La fameuse limite de 800 W n'est pas un plafond de puissance interdit au-delà :
 - puissance **égale ou supérieure à 800 W** : déclaration à Fluvius dans les 30 jours ;
 - compteur analogique : déclaration systématique (Fluvius installe alors un compteur numérique).
 
+![Faut-il déclarer votre batterie ? La règle des 800 W](/images/synergrid-declaration-800w.png)
+
 Par sécurité, 800 W est aussi la puissance maximale recommandée sur un circuit partagé standard (16 A) ; au-delà, un **circuit dédié** est nécessaire. En Wallonie et à Bruxelles, adressez-vous à votre gestionnaire de réseau (ORES, RESA, Sibelga).
 
 ## Faut-il un électricien et un contrôle RGIE/AREI ?
@@ -74,6 +78,8 @@ Cela dépend du type d'installation.
 Pour une **batterie plug-and-play homologuée** : depuis le 15 octobre 2025, aucun électricien n'est requis pour ces modèles, le pilotage se faisant via un dongle sur le port P1 du compteur numérique. Aucun contrôle RGIE n'est en principe exigé — sauf si vous ajoutez un circuit dédié.
 
 Pour une **installation fixe** raccordée au réseau, la procédure conforme est la suivante :
+
+![Les 6 étapes d'une installation de batterie conforme en Belgique](/images/synergrid-6-etapes.png)
 
 1. **Étude technique** : schéma unifilaire et schéma de situation.
 2. **Installation par un professionnel agréé** (obligatoire pour le raccordé-réseau).
