@@ -1,0 +1,5 @@
+frontend.tar.gz
+backend/.strapi/
+backend/.strapi-updater.json
+backend/types/
+backend/.tmp/
