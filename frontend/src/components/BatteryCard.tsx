@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Battery } from "@/lib/types";
 import ScoreCircle from "./ScoreCircle";
+import BatteryImage from "./BatteryImage";
 
 interface BatteryCardProps {
   battery: Battery;
@@ -21,8 +22,8 @@ export default function BatteryCard({ battery }: BatteryCardProps) {
       className="card group flex flex-col overflow-hidden transition-shadow hover:shadow-lg"
     >
       {/* Image placeholder */}
-      <div className="relative flex h-48 items-center justify-center bg-[var(--color-ground)] text-4xl text-[var(--color-text-muted)]">
-        🔋
+      <div className="relative h-48">
+        <BatteryImage battery={battery} />
         {badge && (
           <span className="absolute left-3 top-3 rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold text-white">
             {badge}
