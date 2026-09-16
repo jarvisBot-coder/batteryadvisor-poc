@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CompareProvider } from "@/lib/compare";
 import CompareBar from "@/components/CompareBar";
+import CookieConsent from "@/components/CookieConsent";
+import Analytics from "@/components/Analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,7 +48,9 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <CompareBar />
+          <CookieConsent />
         </CompareProvider>
+        <Analytics />
       </body>
     </html>
   );

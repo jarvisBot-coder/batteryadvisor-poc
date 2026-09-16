@@ -27,6 +27,8 @@ export default function Footer() {
                 { href: "/comparateur", label: "Comparateur" },
                 { href: "/toplistes", label: "Toplistes" },
                 { href: "/marques", label: "Marques" },
+                { href: "/belgique", label: "Belgique" },
+                { href: "/glossaire", label: "Glossaire" },
                 { href: "/guide", label: "Guide personnalisé" },
                 { href: "/blog", label: "Blog & guides" },
               ].map((link) => (
@@ -56,6 +58,21 @@ export default function Footer() {
               <li>
                 <Link href="/a-propos" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
                   À propos
+                </Link>
+              </li>
+              <li>
+                <Link href="/mentions-legales" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
+                  Mentions légales
+                </Link>
+              </li>
+              <li>
+                <Link href="/confidentialite" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
+                  Confidentialité
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-primary)]">
+                  Cookies
                 </Link>
               </li>
               <li className="text-[var(--color-text-muted)]">Données mises à jour régulièrement</li>

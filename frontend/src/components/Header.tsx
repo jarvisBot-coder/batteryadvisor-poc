@@ -6,6 +6,7 @@ const navItems = [
   { href: "/comparateur", label: "Comparateur" },
   { href: "/toplistes", label: "Toplistes" },
   { href: "/marques", label: "Marques" },
+  { href: "/belgique", label: "Belgique" },
   { href: "/outils", label: "Outils" },
   { href: "/blog", label: "Blog" },
 ];

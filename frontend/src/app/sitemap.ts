@@ -19,6 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/marques`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/methodologie`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${SITE_URL}/a-propos`, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${SITE_URL}/belgique`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/glossaire`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${SITE_URL}/mentions-legales`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/confidentialite`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/cookies`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   let batteryRoutes: MetadataRoute.Sitemap = [];
